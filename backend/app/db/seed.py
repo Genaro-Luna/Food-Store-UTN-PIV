@@ -1,9 +1,9 @@
 from app.core.security import hash_password
 from app.core.unit_of_work import UnitOfWork
 from app.modules.usuarios.model import Usuario
-from app.modules.categorias.model import Categoria
-from app.modules.productos.model import Producto
-from app.modules.ingredientes.model import Ingrediente 
+from app.modules.categoria.model import Categoria
+from app.modules.producto.model import Producto
+from app.modules.ingrediente.model import Ingrediente
 
 
 def seed_initial_data() -> None:
@@ -49,14 +49,6 @@ def seed_initial_data() -> None:
                 Categoria(
                     nombre="Bebidas",
                     descripcion="Gaseosas, aguas saborizadas y cervezas",
-                    activo=True,
-                )
-            )
-        if not uow.categorias.get_all():
-            cat_hamburguesas = uow.categorias.create(
-                Categoria(
-                    nombre="Hamburguesas",
-                    descripcion="Medallones caseros en pan de papa",
                     activo=True,
                 )
             )
