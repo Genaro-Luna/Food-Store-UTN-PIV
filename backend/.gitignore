@@ -1,0 +1,11 @@
+# Variables de entorno reales (nunca se suben al repositorio)
+.env
+
+# Entorno virtual de Python
+.venv/
+venv/
+
+# Caché de compilación de Python
+__pycache__/
+*.py[cod]
+.pytest_cache/

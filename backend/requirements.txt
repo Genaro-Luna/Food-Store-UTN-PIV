@@ -1,0 +1,8 @@
+fastapi[standard]
+sqlmodel
+pydantic
+pydantic-settings
+psycopg2-binary
+python-dotenv
+bcrypt
+python-jose[cryptography]==3.5.0
