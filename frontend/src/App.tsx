@@ -1,75 +1,20 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { Navbar } from '@/shared/components/Navbar';
-import { ProtectedRoute } from './components/ProtectedRoute';
-import { CategoriesPage } from '@/features/categories';
-import { ProductsPage } from '@/features/products';
-import { IngredientsPage } from '@/features/ingredients';
-import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
-import { AdminUsersPage, LoginPage, RegisterPage, useAuthStore } from '@/features/auth';
+import { useAuthStore } from '@/features/auth';
+import { AppRouter } from '@/routes/AppRouter';
 import { Toast } from '@/shared/components/Toast';
 
 export default function App() {
     const checkAuth = useAuthStore((s) => s.checkAuth);
 
+    // Única lógica permitida (RA-04): verificar la sesión al iniciar
     useEffect(() => {
         checkAuth();
     }, [checkAuth]);
 
     return (
-        <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors">
-            <Navbar />
-            <Routes>
-                {/* Rutas públicas */}
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/unauthorized" element={<UnauthorizedPage />} />
-
-                {/* Rutas protegidas (cualquier usuario autenticado) */}
-                <Route
-                    path="/categorias"
-                    element={
-                        <ProtectedRoute>
-                            <CategoriesPage />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/productos"
-                    element={
-                        <ProtectedRoute>
-                            <ProductsPage />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/ingredientes"
-                    element={
-                        <ProtectedRoute>
-                            <IngredientsPage />
-                        </ProtectedRoute>
-                    }
-                />
-
-                {/* Ruta exclusiva para Administrador */}
-                <Route
-                    path="/admin/users"
-                    element={
-                        <ProtectedRoute allowedRoles={['admin']}>
-                            <AdminUsersPage />
-                        </ProtectedRoute>
-                    }
-                />
-
-                {/* Alias en inglés por compatibilidad con el PDF del TP */}
-                <Route path="/categories" element={<Navigate to="/categorias" replace />} />
-                <Route path="/products" element={<Navigate to="/productos" replace />} />
-                <Route path="/ingredients" element={<Navigate to="/ingredientes" replace />} />
-
-                {/* Redirección por defecto */}
-                <Route path="*" element={<Navigate to="/categorias" replace />} />
-            </Routes>
+        <>
+            <AppRouter />
             <Toast />
-        </div>
+        </>
     );
 }
