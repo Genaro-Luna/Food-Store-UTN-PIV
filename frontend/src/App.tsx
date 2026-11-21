@@ -19,7 +19,7 @@ export default function App() {
     }, [checkSession]);
 
     return (
-        <div className="min-h-screen bg-gray-200">
+        <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors">
             <Navbar />
             <Routes>
                 {/* Rutas públicas */}

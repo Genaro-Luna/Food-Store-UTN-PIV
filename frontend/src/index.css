@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Tailwind v4: "dark:" se activa con la clase .dark en <html>, no con la preferencia del SO */
+@custom-variant dark (&:where(.dark, .dark *));
+
 body {
-  @apply bg-gray-200;
+  @apply bg-gray-200 dark:bg-gray-900 transition-colors;
 }
