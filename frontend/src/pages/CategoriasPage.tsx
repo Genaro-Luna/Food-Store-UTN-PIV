@@ -20,6 +20,7 @@ import {
     deleteCategoria,
 } from '../api/categorias.actions';
 import { useAuthStore } from '../store/authStore';
+import { useNotificationStore } from '@/store/notificationStore';
 
 const inputClass =
     'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
@@ -28,7 +29,7 @@ export const CategoriasPage: React.FC = () => {
     const queryClient = useQueryClient();
     const user = useAuthStore((s) => s.user);
     const isAdmin = user?.role === 'admin';
-
+    const showNotification = useNotificationStore((s) => s.showNotification);
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [categoriaToEdit, setCategoriaToEdit] = useState<Categoria | null>(null);
     const [modalError, setModalError] = useState<string | null>(null);
@@ -50,6 +51,7 @@ export const CategoriasPage: React.FC = () => {
         mutationFn: createCategoria,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['categorias'] });
+            showNotification('Categoría creada correctamente');
             setIsModalOpen(false);
             setModalError(null);
         },
@@ -62,14 +64,19 @@ export const CategoriasPage: React.FC = () => {
             queryClient.invalidateQueries({ queryKey: ['categorias'] });
             setIsModalOpen(false);
             setCategoriaToEdit(null);
+            showNotification('Categoría actualizada correctamente');
             setModalError(null);
         },
-        onError: (err: Error) => setModalError(err.message),
+        onError: (err: Error) => {
+            setDeleteError(err.message);
+            showNotification(err.message, 'error');
+        },
     });
 
     const deleteMutation = useMutation({
         mutationFn: deleteCategoria,
         onSuccess: () => {
+            showNotification('Categoría eliminada correctamente');
             setDeleteError(null);
             queryClient.invalidateQueries({ queryKey: ['categorias'] });
         },

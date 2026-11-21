@@ -10,6 +10,7 @@ import { RegisterPage } from './pages/RegisterPage';
 import { UnauthorizedPage } from './pages/UnautorizedPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { useAuthStore } from '@/store/authStore';
+import { Toast } from '@/shared/components/Toast';
 
 export default function App() {
     const checkSession = useAuthStore((s) => s.checkSession);
@@ -19,7 +20,7 @@ export default function App() {
     }, [checkSession]);
 
     return (
-        <div className="min-h-screen bg-gray-200">
+        <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors">
             <Navbar />
             <Routes>
                 {/* Rutas públicas */}
@@ -71,6 +72,7 @@ export default function App() {
                 {/* Redirección por defecto */}
                 <Route path="*" element={<Navigate to="/categorias" replace />} />
             </Routes>
+            <Toast />
         </div>
     );
 }

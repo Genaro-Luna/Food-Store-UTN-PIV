@@ -2,10 +2,13 @@ import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '@/store/themeStore';
 
 export const Navbar: React.FC = () => {
     const user = useAuthStore((s) => s.user);
     const logout = useAuthStore((s) => s.logout);
+    const darkMode = useThemeStore((s) => s.darkMode);
+    const toggleTheme = useThemeStore((s) => s.toggleTheme);
     const queryClient = useQueryClient();
     const navigate = useNavigate();
 
@@ -24,7 +27,7 @@ export const Navbar: React.FC = () => {
     };
 
     return (
-        <nav className="bg-blue-600 text-white shadow-md px-6 py-4 flex flex-wrap justify-between items-center gap-4">
+        <nav className="bg-blue-600 dark:bg-gray-800 text-white shadow-md px-6 py-4 flex flex-wrap justify-between items-center gap-4">
             <div className="flex items-center gap-6">
                 <h1 className="text-xl font-bold tracking-wide">
                     Gestión Full Stack - UTN
@@ -60,6 +63,17 @@ export const Navbar: React.FC = () => {
                         Rol: {user.role}
                     </span>
                 </div>
+
+                <button
+                    type="button"
+                    onClick={toggleTheme}
+                    aria-label={darkMode ? 'Activar modo claro' : 'Activar modo oscuro'}
+                    title={darkMode ? 'Modo claro' : 'Modo oscuro'}
+                    className="bg-blue-800 dark:bg-gray-700 hover:opacity-80 px-3 py-1.5 rounded-lg text-sm active:scale-95 transition"
+                >
+                    {darkMode ? '☀️' : '🌙'}
+                </button>
+
                 <button
                     type="button"
                     onClick={handleLogout}
