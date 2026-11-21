@@ -30,7 +30,7 @@ export const AdminUsersPage: React.FC = () => {
                 accessorKey: 'username',
                 header: 'Usuario',
                 cell: (info) => (
-                    <span className="font-semibold text-gray-900">
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">
                         {info.getValue<string>()}
                     </span>
                 ),
@@ -132,7 +132,7 @@ export const AdminUsersPage: React.FC = () => {
     return (
         <main className="max-w-5xl mx-auto p-6 mt-4">
             <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-800">
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                     Administración de Usuarios
                 </h2>
             </div>

@@ -5,7 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import type { LoginCredentials } from '../types/auth.types';
 
 const inputClass =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
+    'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
 
 export const LoginPage: React.FC = () => {
     const { user, login, error, clearError } = useAuth();
@@ -47,13 +47,13 @@ export const LoginPage: React.FC = () => {
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100">
+        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100 dark:border-gray-700">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         Iniciar Sesión
                     </h2>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         Ingresa tus credenciales para acceder al sistema
                     </p>
                 </div>
@@ -75,7 +75,7 @@ export const LoginPage: React.FC = () => {
                     <form.Field name="username">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Usuario *
                                 </label>
                                 <input
@@ -100,7 +100,7 @@ export const LoginPage: React.FC = () => {
                     <form.Field name="password">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Contraseña *
                                 </label>
                                 <input
@@ -137,7 +137,7 @@ export const LoginPage: React.FC = () => {
                     </form.Subscribe>
                 </form>
 
-                <p className="mt-6 text-center text-xs text-gray-600">
+                <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
                     ¿No tienes una cuenta?{' '}
                     <Link
                         to="/register"
