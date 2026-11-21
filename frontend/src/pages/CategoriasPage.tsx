@@ -21,6 +21,7 @@ import {
 } from '../api/categorias.actions';
 import { useAuthStore } from '../store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
+import { isForbiddenError } from '@/shared/api/api';
 
 const inputClass =
     'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
@@ -69,7 +70,7 @@ export const CategoriasPage: React.FC = () => {
         },
         onError: (err: Error) => {
             setDeleteError(err.message);
-            showNotification(err.message, 'error');
+            if (!isForbiddenError(err)) showNotification(err.message, 'error');
         },
     });
 

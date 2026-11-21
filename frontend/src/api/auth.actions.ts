@@ -1,4 +1,4 @@
-import { axiosInstance } from './axiosInstance';
+import { api } from '@/shared/api/api';
 import type { UsuarioAuth, RegisterFormValues } from '../types/auth.types';
 
 const AUTH_PREFIX = '/api/v1/auth';
@@ -8,7 +8,7 @@ export const requestLogin = async (
     password: string
 ): Promise<void> => {
     const formData = new URLSearchParams({ username, password });
-    await axiosInstance.post(`${AUTH_PREFIX}/token`, formData, {
+    await api.post(`${AUTH_PREFIX}/token`, formData, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
 };
@@ -16,7 +16,7 @@ export const requestLogin = async (
 export const requestRegister = async (
     data: RegisterFormValues
 ): Promise<UsuarioAuth> => {
-    const res = await axiosInstance.post<UsuarioAuth>(
+    const res = await api.post<UsuarioAuth>(
         `${AUTH_PREFIX}/register`,
         data
     );
@@ -25,7 +25,7 @@ export const requestRegister = async (
 
 export const requestMe = async (): Promise<UsuarioAuth | null> => {
     try {
-        const res = await axiosInstance.get<UsuarioAuth>(`${AUTH_PREFIX}/me`);
+        const res = await api.get<UsuarioAuth>(`${AUTH_PREFIX}/me`);
         return res.data;
     } catch {
         return null;
@@ -33,25 +33,25 @@ export const requestMe = async (): Promise<UsuarioAuth | null> => {
 };
 
 export const requestLogout = async (): Promise<void> => {
-    await axiosInstance.post(`${AUTH_PREFIX}/logout`);
+    await api.post(`${AUTH_PREFIX}/logout`);
 };
 
 export const getAdminUsers = async (): Promise<UsuarioAuth[]> => {
-    const res = await axiosInstance.get<UsuarioAuth[]>(
+    const res = await api.get<UsuarioAuth[]>(
         `${AUTH_PREFIX}/admin/usuarios`
     );
     return res.data;
 };
 
 export const activateUser = async (userId: number): Promise<UsuarioAuth> => {
-    const res = await axiosInstance.post<UsuarioAuth>(
+    const res = await api.post<UsuarioAuth>(
         `${AUTH_PREFIX}/admin/usuarios/${userId}/activar`
     );
     return res.data;
 };
 
 export const deactivateUser = async (userId: number): Promise<UsuarioAuth> => {
-    const res = await axiosInstance.post<UsuarioAuth>(
+    const res = await api.post<UsuarioAuth>(
         `${AUTH_PREFIX}/admin/usuarios/${userId}/desactivar`
     );
     return res.data;
