@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from '@/shared/components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CategoriesPage } from '@/features/categories';
-import { ProductsPage } from './pages/ProductsPage';
+import { ProductsPage } from '@/features/products';
 import { IngredientesPage } from './pages/IngredientesPage';
 import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
 import { AdminUsersPage, LoginPage, RegisterPage, useAuthStore } from '@/features/auth';

@@ -1,5 +1,5 @@
 import { api } from '@/shared/api/api';
-import type { Producto, ProductoFormValues } from '../types/producto';
+import type { Producto, ProductoFormValues } from '../types/producto.types';
 
 const ENDPOINT = '/productos';
 
