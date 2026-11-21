@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from '@/shared/components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
-import { CategoriasPage } from './pages/CategoriasPage';
+import { CategoriesPage } from '@/features/categories';
 import { ProductsPage } from './pages/ProductsPage';
 import { IngredientesPage } from './pages/IngredientesPage';
 import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
@@ -30,7 +30,7 @@ export default function App() {
                     path="/categorias"
                     element={
                         <ProtectedRoute>
-                            <CategoriasPage />
+                            <CategoriesPage />
                         </ProtectedRoute>
                     }
                 />
