@@ -1,19 +1,17 @@
-import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
-import { useAuthStore } from '../store/authStore';
+import axios from 'axios';
 
-export const axiosInstance = axios.create({
+/**
+ * Instancia única de Axios para toda la aplicación.
+ * No importa ningún store: los interceptores que dependen del estado
+ * global viven en setupInterceptors.ts (evita dependencias circulares).
+ */
+export const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:8000',
     timeout: 10000,
-    withCredentials: true,
+    withCredentials: true, // envía y recibe la cookie HttpOnly access_token
 });
 
-axiosInstance.interceptors.request.use(
-    (config: InternalAxiosRequestConfig) => {
-        config.headers.set('Accept-Language', 'es');
-        return config;
-    }
-);
-
+/** Traduce cualquier error de Axios a un mensaje legible para la interfaz. */
 export function handleApiError(error: unknown): string {
     if (!axios.isAxiosError(error)) {
         return error instanceof Error ? error.message : 'Error inesperado.';
@@ -46,19 +44,6 @@ export function handleApiError(error: unknown): string {
     }
 }
 
-const RUTAS_DE_AUTH = ['/auth/token', '/auth/me'];
-
-axiosInstance.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError) => {
-        const url = error.config?.url ?? '';
-        const esDeAuth = RUTAS_DE_AUTH.some((r) => url.includes(r));
-
-        if (error.response?.status === 401 && !esDeAuth) {
-            useAuthStore.setState({ user: null });
-        }
-
-        error.message = handleApiError(error);
-        return Promise.reject(error);
-    }
-);
+/** Indica si un error es un 403 de la API (ya notificado por el interceptor). */
+export const isForbiddenError = (error: unknown): boolean =>
+    axios.isAxiosError(error) && error.response?.status === 403;

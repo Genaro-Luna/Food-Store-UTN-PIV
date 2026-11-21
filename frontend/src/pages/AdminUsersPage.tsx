@@ -8,8 +8,8 @@ import {
     type ColumnDef,
     type SortingState,
 } from '@tanstack/react-table';
-import { CategoriaList } from '../components/CategoriaList';
-import { LoadingState, ErrorState } from '../components/UiStates';
+import { DataTable } from '@/shared/components/DataTable';
+import { LoadingState, ErrorState } from '@/shared/components/UiStates';
 import {
     getAdminUsers,
     activateUser,
@@ -196,7 +196,7 @@ export const AdminUsersPage: React.FC = () => {
                 </div>
             )}
 
-            <CategoriaList
+            <DataTable
                 table={table}
                 totalItems={usuarios.length}
                 emptyMessage="No hay usuarios registrados."

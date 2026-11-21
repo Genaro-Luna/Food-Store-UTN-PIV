@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface CategoriaModalProps {
+interface ModalProps {
     isOpen: boolean;
     onClose: () => void;
     title: string;
@@ -8,7 +8,7 @@ interface CategoriaModalProps {
     children: React.ReactNode;
 }
 
-export const CategoriaModal: React.FC<CategoriaModalProps> = ({
+export const Modal: React.FC<ModalProps> = ({
     isOpen,
     onClose,
     title,

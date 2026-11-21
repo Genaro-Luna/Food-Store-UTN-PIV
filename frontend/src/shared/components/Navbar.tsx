@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import { useThemeStore } from '@/store/themeStore';
 
 export const Navbar: React.FC = () => {

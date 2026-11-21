@@ -9,9 +9,9 @@ import {
     type ColumnDef,
     type SortingState,
 } from '@tanstack/react-table';
-import { CategoriaList } from '../components/CategoriaList';
-import { CategoriaModal } from '../components/CategoriaModal';
-import { LoadingState, ErrorState } from '../components/UiStates';
+import { DataTable } from '@/shared/components/DataTable';
+import { Modal } from '@/shared/components/Modal';
+import { LoadingState, ErrorState } from '@/shared/components/UiStates';
 import type { Categoria, CategoriaFormValues } from '../types/categorias';
 import {
     getCategorias,
@@ -21,6 +21,7 @@ import {
 } from '../api/categorias.actions';
 import { useAuthStore } from '../store/authStore';
 import { useNotificationStore } from '@/store/notificationStore';
+import { isForbiddenError } from '@/shared/api/api';
 
 const inputClass =
     'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
@@ -69,7 +70,7 @@ export const CategoriasPage: React.FC = () => {
         },
         onError: (err: Error) => {
             setDeleteError(err.message);
-            showNotification(err.message, 'error');
+            if (!isForbiddenError(err)) showNotification(err.message, 'error');
         },
     });
 
@@ -249,7 +250,7 @@ export const CategoriasPage: React.FC = () => {
                 </div>
             )}
 
-            <CategoriaList
+            <DataTable
                 table={table}
                 totalItems={categorias.length}
                 emptyMessage="No hay categorías registradas."
@@ -257,7 +258,7 @@ export const CategoriasPage: React.FC = () => {
             />
 
             {isAdmin && (
-                <CategoriaModal
+                <Modal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     title={categoriaToEdit ? 'Editar Categoría' : 'Nueva Categoría'}
@@ -351,7 +352,7 @@ export const CategoriasPage: React.FC = () => {
                             </form.Subscribe>
                         </div>
                     </form>
-                </CategoriaModal>
+                </Modal>
             )}
         </main>
     );

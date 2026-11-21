@@ -9,9 +9,9 @@ import {
     type ColumnDef,
     type SortingState,
 } from '@tanstack/react-table';
-import { CategoriaList } from '../components/CategoriaList';
-import { CategoriaModal } from '../components/CategoriaModal';
-import { LoadingState, ErrorState } from '../components/UiStates';
+import { DataTable } from '@/shared/components/DataTable';
+import { Modal } from '@/shared/components/Modal';
+import { LoadingState, ErrorState } from '@/shared/components/UiStates';
 import type { Producto, ProductoFormValues } from '../types/producto';
 import {
     getProductos,
@@ -281,7 +281,7 @@ export const ProductsPage: React.FC = () => {
                 </div>
             )}
 
-            <CategoriaList
+            <DataTable
                 table={table}
                 totalItems={productos.length}
                 emptyMessage="No hay productos cargados aún."
@@ -289,7 +289,7 @@ export const ProductsPage: React.FC = () => {
             />
 
             {isAdmin && (
-                <CategoriaModal
+                <Modal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     title={productoToEdit ? 'Editar Producto' : 'Nuevo Producto'}
@@ -423,7 +423,7 @@ export const ProductsPage: React.FC = () => {
                             </form.Subscribe>
                         </div>
                     </form>
-                </CategoriaModal>
+                </Modal>
             )}
         </main>
     );

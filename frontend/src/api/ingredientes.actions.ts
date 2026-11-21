@@ -1,17 +1,17 @@
-import { axiosInstance } from './axiosInstance';
+import { api } from '@/shared/api/api';
 import type { Ingrediente, IngredienteFormValues } from '../types/ingrediente';
 
 const ENDPOINT = '/ingredientes';
 
 export const getIngredientes = async (): Promise<Ingrediente[]> => {
-    const res = await axiosInstance.get<Ingrediente[]>(ENDPOINT);
+    const res = await api.get<Ingrediente[]>(ENDPOINT);
     return res.data;
 };
 
 export const createIngrediente = async (
     data: IngredienteFormValues
 ): Promise<Ingrediente> => {
-    const res = await axiosInstance.post<Ingrediente>(ENDPOINT, data);
+    const res = await api.post<Ingrediente>(ENDPOINT, data);
     return res.data;
 };
 
@@ -22,10 +22,10 @@ export const updateIngrediente = async ({
     id: number;
     data: IngredienteFormValues;
 }): Promise<Ingrediente> => {
-    const res = await axiosInstance.put<Ingrediente>(`${ENDPOINT}/${id}`, data);
+    const res = await api.put<Ingrediente>(`${ENDPOINT}/${id}`, data);
     return res.data;
 };
 
 export const deleteIngrediente = async (id: number): Promise<void> => {
-    await axiosInstance.delete(`${ENDPOINT}/${id}`);
+    await api.delete(`${ENDPOINT}/${id}`);
 };
