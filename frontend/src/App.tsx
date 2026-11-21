@@ -4,7 +4,7 @@ import { Navbar } from '@/shared/components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CategoriesPage } from '@/features/categories';
 import { ProductsPage } from '@/features/products';
-import { IngredientesPage } from './pages/IngredientesPage';
+import { IngredientsPage } from '@/features/ingredients';
 import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
 import { AdminUsersPage, LoginPage, RegisterPage, useAuthStore } from '@/features/auth';
 import { Toast } from '@/shared/components/Toast';
@@ -46,7 +46,7 @@ export default function App() {
                     path="/ingredientes"
                     element={
                         <ProtectedRoute>
-                            <IngredientesPage />
+                            <IngredientsPage />
                         </ProtectedRoute>
                     }
                 />
