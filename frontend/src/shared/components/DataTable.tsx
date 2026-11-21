@@ -1,19 +1,19 @@
 import { flexRender, type Table } from '@tanstack/react-table';
 import { EmptyState } from './UiStates';
 
-interface CategoriaListProps<T> {
+interface DataTableProps<T> {
     table: Table<T>;
     totalItems: number;
     emptyMessage?: string;
     onAddFirst?: () => void;
 }
 
-export function CategoriaList<T>({
+export function DataTable<T>({
     table,
     totalItems,
-    emptyMessage = 'No hay categorías registradas. ¡Agrega una nueva!',
+    emptyMessage = 'No hay registros. ¡Agrega uno nuevo!',
     onAddFirst,
-}: CategoriaListProps<T>) {
+}: DataTableProps<T>) {
     if (totalItems === 0) {
         return (
             <EmptyState

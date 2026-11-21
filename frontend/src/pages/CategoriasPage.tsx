@@ -9,9 +9,9 @@ import {
     type ColumnDef,
     type SortingState,
 } from '@tanstack/react-table';
-import { CategoriaList } from '../components/CategoriaList';
-import { CategoriaModal } from '../components/CategoriaModal';
-import { LoadingState, ErrorState } from '../components/UiStates';
+import { DataTable } from '@/shared/components/DataTable';
+import { Modal } from '@/shared/components/Modal';
+import { LoadingState, ErrorState } from '@/shared/components/UiStates';
 import type { Categoria, CategoriaFormValues } from '../types/categorias';
 import {
     getCategorias,
@@ -250,7 +250,7 @@ export const CategoriasPage: React.FC = () => {
                 </div>
             )}
 
-            <CategoriaList
+            <DataTable
                 table={table}
                 totalItems={categorias.length}
                 emptyMessage="No hay categorías registradas."
@@ -258,7 +258,7 @@ export const CategoriasPage: React.FC = () => {
             />
 
             {isAdmin && (
-                <CategoriaModal
+                <Modal
                     isOpen={isModalOpen}
                     onClose={() => setIsModalOpen(false)}
                     title={categoriaToEdit ? 'Editar Categoría' : 'Nueva Categoría'}
@@ -352,7 +352,7 @@ export const CategoriasPage: React.FC = () => {
                             </form.Subscribe>
                         </div>
                     </form>
-                </CategoriaModal>
+                </Modal>
             )}
         </main>
     );

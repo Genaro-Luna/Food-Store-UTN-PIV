@@ -1,8 +1,8 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '@/store/authStore';
 import type { Role } from '../types/auth.types';
-import { LoadingState } from './UiStates';
+import { LoadingState } from '@/shared/components/UiStates';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;

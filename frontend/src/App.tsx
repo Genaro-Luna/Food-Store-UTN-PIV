@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Navbar } from './components/Navbar';
+import { Navbar } from '@/shared/components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { CategoriasPage } from './pages/CategoriasPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { IngredientesPage } from './pages/IngredientesPage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
-import { UnauthorizedPage } from './pages/UnautorizedPage';
+import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
 import { useAuthStore } from '@/store/authStore';
 import { Toast } from '@/shared/components/Toast';
