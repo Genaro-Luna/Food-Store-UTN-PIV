@@ -9,7 +9,7 @@ import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
 import { UnauthorizedPage } from './pages/UnautorizedPage';
 import { AdminUsersPage } from './pages/AdminUsersPage';
-import { useAuthStore } from './store/authStore';
+import { useAuthStore } from '@/store/authStore';
 
 export default function App() {
     const checkSession = useAuthStore((s) => s.checkSession);
