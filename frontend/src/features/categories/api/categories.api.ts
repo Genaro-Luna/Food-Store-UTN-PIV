@@ -1,5 +1,5 @@
 import { api } from '@/shared/api/api';
-import type { Categoria, CategoriaFormValues } from '../types/categorias';
+import type { Categoria, CategoriaFormValues } from '../types/categoria.types';
 
 const ENDPOINT = '/categorias';
 
