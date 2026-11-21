@@ -25,10 +25,10 @@ export function DataTable<T>({
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mt-4">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden mt-4">
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
-                    <thead className="bg-gray-50 border-b border-gray-200 text-gray-700">
+                    <thead className="bg-gray-50 dark:bg-gray-900/40 border-b border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300">
                         {table.getHeaderGroups().map((headerGroup) => (
                             <tr key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {
@@ -44,7 +44,7 @@ export function DataTable<T>({
                                             }
                                             className={`px-4 py-3 font-semibold select-none ${
                                                 canSort
-                                                    ? 'cursor-pointer hover:bg-gray-100 transition-colors'
+                                                    ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors'
                                                     : ''
                                             }`}
                                         >
@@ -67,11 +67,11 @@ export function DataTable<T>({
                             </tr>
                         ))}
                     </thead>
-                    <tbody className="divide-y divide-gray-100">
+                    <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
                         {table.getRowModel().rows.map((row) => (
-                            <tr key={row.id} className="hover:bg-gray-50 transition-colors">
+                            <tr key={row.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
                                 {row.getVisibleCells().map((cell) => (
-                                    <td key={cell.id} className="px-4 py-3 text-gray-800">
+                                    <td key={cell.id} className="px-4 py-3 text-gray-800 dark:text-gray-100">
                                         {flexRender(
                                             cell.column.columnDef.cell,
                                             cell.getContext()
@@ -85,7 +85,7 @@ export function DataTable<T>({
             </div>
 
             {/* Controles de Paginación (HU-01) */}
-            <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-600">
+            <div className="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-900/40 border-t border-gray-200 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
                 <span>
                     Página{' '}
                     <strong>
@@ -99,7 +99,7 @@ export function DataTable<T>({
                         type="button"
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
-                        className="px-3 py-1.5 rounded-md border border-gray-300 bg-white font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     >
                         Anterior
                     </button>
@@ -107,7 +107,7 @@ export function DataTable<T>({
                         type="button"
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
-                        className="px-3 py-1.5 rounded-md border border-gray-300 bg-white font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                        className="px-3 py-1.5 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition"
                     >
                         Siguiente
                     </button>

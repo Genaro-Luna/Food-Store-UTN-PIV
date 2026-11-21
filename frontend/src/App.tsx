@@ -5,19 +5,16 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { CategoriasPage } from './pages/CategoriasPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { IngredientesPage } from './pages/IngredientesPage';
-import { LoginPage } from './pages/LoginPage';
-import { RegisterPage } from './pages/RegisterPage';
 import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
-import { AdminUsersPage } from './pages/AdminUsersPage';
-import { useAuthStore } from '@/store/authStore';
+import { AdminUsersPage, LoginPage, RegisterPage, useAuthStore } from '@/features/auth';
 import { Toast } from '@/shared/components/Toast';
 
 export default function App() {
-    const checkSession = useAuthStore((s) => s.checkSession);
+    const checkAuth = useAuthStore((s) => s.checkAuth);
 
     useEffect(() => {
-        checkSession();
-    }, [checkSession]);
+        checkAuth();
+    }, [checkAuth]);
 
     return (
         <div className="min-h-screen bg-gray-200 dark:bg-gray-900 transition-colors">

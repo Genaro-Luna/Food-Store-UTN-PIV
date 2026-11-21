@@ -1,7 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuthStore } from '@/store/authStore';
-import type { Role } from '../types/auth.types';
+import { useAuthStore, type Role } from '@/features/auth';
 import { LoadingState } from '@/shared/components/UiStates';
 
 interface ProtectedRouteProps {
@@ -14,9 +13,9 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     allowedRoles,
 }) => {
     const user = useAuthStore((s) => s.user);
-    const isChecking = useAuthStore((s) => s.isChecking);
+    const status = useAuthStore((s) => s.status);
 
-    if (isChecking && !user) {
+    if (status === 'checking') {
         return (
             <div className="max-w-5xl mx-auto p-6 mt-10">
                 <LoadingState message="Restaurando sesión..." />

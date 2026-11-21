@@ -19,9 +19,9 @@ export const Modal: React.FC<ModalProps> = ({
 
     return (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-6">
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold text-gray-800">{title}</h2>
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">{title}</h2>
                     <button
                         type="button"
                         onClick={onClose}

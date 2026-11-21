@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from '@tanstack/react-form';
-import { useAuthStore } from '../store/authStore';
-import { requestRegister } from '../api/auth.actions';
+import { useAuth } from '../hooks/useAuth';
+import { useNotificationStore } from '@/store/notificationStore';
 import type { RegisterFormValues } from '../types/auth.types';
 
 const inputClass =
-    'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
+    'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
 
 export const RegisterPage: React.FC = () => {
-    const user = useAuthStore((s) => s.user);
+    const { user, register } = useAuth();
+    const showNotification = useNotificationStore((s) => s.showNotification);
     const navigate = useNavigate();
     const [apiError, setApiError] = useState<string | null>(null);
 
@@ -41,12 +42,13 @@ export const RegisterPage: React.FC = () => {
         onSubmit: async ({ value }) => {
             setApiError(null);
             try {
-                await requestRegister({
+                await register({
                     username: value.username.trim(),
                     full_name: value.full_name.trim(),
                     email: value.email.trim(),
                     password: value.password,
                 });
+                showNotification('Cuenta creada. Ya podés iniciar sesión.');
                 navigate('/login', { replace: true });
             } catch (e) {
                 setApiError(
@@ -61,13 +63,13 @@ export const RegisterPage: React.FC = () => {
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200">
-            <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100">
+        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-900">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100 dark:border-gray-700">
                 <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800">
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
                         Crear Cuenta
                     </h2>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         Regístrate para acceder al sistema con rol de usuario
                     </p>
                 </div>
@@ -89,7 +91,7 @@ export const RegisterPage: React.FC = () => {
                     <form.Field name="username">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Nombre de usuario *
                                 </label>
                                 <input
@@ -114,7 +116,7 @@ export const RegisterPage: React.FC = () => {
                     <form.Field name="full_name">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Nombre completo *
                                 </label>
                                 <input
@@ -139,7 +141,7 @@ export const RegisterPage: React.FC = () => {
                     <form.Field name="email">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Email *
                                 </label>
                                 <input
@@ -164,7 +166,7 @@ export const RegisterPage: React.FC = () => {
                     <form.Field name="password">
                         {(f) => (
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Contraseña (mínimo 8 caracteres) *
                                 </label>
                                 <input
@@ -201,7 +203,7 @@ export const RegisterPage: React.FC = () => {
                     </form.Subscribe>
                 </form>
 
-                <p className="mt-6 text-center text-xs text-gray-600">
+                <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
                     ¿Ya tienes una cuenta?{' '}
                     <Link
                         to="/login"
