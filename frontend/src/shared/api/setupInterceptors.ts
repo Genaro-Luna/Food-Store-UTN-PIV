@@ -1,6 +1,6 @@
 import type { AxiosError } from 'axios';
 import { api, handleApiError } from './api';
-import { useAuthStore } from '@/store/authStore';
+import { useAuthStore } from '@/features/auth';
 import { useNotificationStore } from '@/store/notificationStore';
 
 // En estas rutas un 401 es una respuesta esperada (credenciales incorrectas
@@ -21,7 +21,7 @@ api.interceptors.response.use(
 
         if (status === 401 && !esDeAuth) {
             // Sesión vencida o revocada: se limpia el store y ProtectedRoute lleva al login
-            useAuthStore.setState({ user: null });
+            useAuthStore.getState().clearSession();
             useNotificationStore
                 .getState()
                 .showNotification('La sesión venció. Iniciá sesión de nuevo.', 'info');

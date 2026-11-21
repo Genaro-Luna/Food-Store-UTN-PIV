@@ -1,57 +1,43 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useForm } from '@tanstack/react-form';
-import { useAuthStore } from '../store/authStore';
-import { requestRegister } from '../api/auth.actions';
-import type { RegisterFormValues } from '../types/auth.types';
+import { useAuth } from '../hooks/useAuth';
+import type { LoginCredentials } from '../types/auth.types';
 
 const inputClass =
     'w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
 
-export const RegisterPage: React.FC = () => {
-    const user = useAuthStore((s) => s.user);
+export const LoginPage: React.FC = () => {
+    const { user, login, error, clearError } = useAuth();
     const navigate = useNavigate();
-    const [apiError, setApiError] = useState<string | null>(null);
+
+    useEffect(() => {
+        clearError();
+    }, [clearError]);
 
     const form = useForm({
         defaultValues: {
             username: '',
-            full_name: '',
-            email: '',
             password: '',
-        } as RegisterFormValues,
+        } as LoginCredentials,
         validators: {
             onSubmit: ({ value }) => {
-                const errors: Partial<Record<keyof RegisterFormValues, string>> = {};
-                if (value.username.trim().length < 3) {
-                    errors.username = 'El usuario debe tener al menos 3 caracteres';
+                const errors: Partial<Record<keyof LoginCredentials, string>> = {};
+                if (!value.username.trim()) {
+                    errors.username = 'Ingresa tu nombre de usuario';
                 }
-                if (!value.full_name.trim()) {
-                    errors.full_name = 'El nombre completo es obligatorio';
-                }
-                if (!value.email.includes('@')) {
-                    errors.email = 'Ingresa un email válido';
-                }
-                if (value.password.length < 8) {
-                    errors.password = 'La contraseña debe tener al menos 8 caracteres';
+                if (!value.password) {
+                    errors.password = 'Ingresa tu contraseña';
                 }
                 return Object.keys(errors).length > 0 ? { fields: errors } : undefined;
             },
         },
         onSubmit: async ({ value }) => {
-            setApiError(null);
             try {
-                await requestRegister({
-                    username: value.username.trim(),
-                    full_name: value.full_name.trim(),
-                    email: value.email.trim(),
-                    password: value.password,
-                });
-                navigate('/login', { replace: true });
-            } catch (e) {
-                setApiError(
-                    e instanceof Error ? e.message : 'No se pudo completar el registro'
-                );
+                await login(value.username.trim(), value.password);
+                navigate('/categorias', { replace: true });
+            } catch {
+                // El error ya queda guardado en el store de auth y se muestra en pantalla
             }
         },
     });
@@ -65,16 +51,16 @@ export const RegisterPage: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100">
                 <div className="text-center mb-6">
                     <h2 className="text-2xl font-bold text-gray-800">
-                        Crear Cuenta
+                        Iniciar Sesión
                     </h2>
                     <p className="text-sm text-gray-500 mt-1">
-                        Regístrate para acceder al sistema con rol de usuario
+                        Ingresa tus credenciales para acceder al sistema
                     </p>
                 </div>
 
-                {apiError && (
+                {error && (
                     <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
-                        {apiError}
+                        {error}
                     </div>
                 )}
 
@@ -90,61 +76,11 @@ export const RegisterPage: React.FC = () => {
                         {(f) => (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Nombre de usuario *
+                                    Usuario *
                                 </label>
                                 <input
                                     type="text"
-                                    placeholder="Ej: genaroluna"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="full_name">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Nombre completo *
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: Genaro Luna"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="email">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Email *
-                                </label>
-                                <input
-                                    type="email"
-                                    placeholder="usuario@ejemplo.com"
+                                    placeholder="Ej: admin o juan"
                                     className={inputClass}
                                     value={f.state.value}
                                     onChange={(e) => f.handleChange(e.target.value)}
@@ -165,7 +101,7 @@ export const RegisterPage: React.FC = () => {
                         {(f) => (
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Contraseña (mínimo 8 caracteres) *
+                                    Contraseña *
                                 </label>
                                 <input
                                     type="password"
@@ -195,19 +131,19 @@ export const RegisterPage: React.FC = () => {
                                 disabled={!canSubmit || isSubmitting}
                                 className="mt-2 w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 active:scale-95 transition shadow-sm"
                             >
-                                {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
+                                {isSubmitting ? 'Iniciando sesión...' : 'Ingresar'}
                             </button>
                         )}
                     </form.Subscribe>
                 </form>
 
                 <p className="mt-6 text-center text-xs text-gray-600">
-                    ¿Ya tienes una cuenta?{' '}
+                    ¿No tienes una cuenta?{' '}
                     <Link
-                        to="/login"
+                        to="/register"
                         className="text-blue-600 font-semibold hover:underline"
                     >
-                        Inicia sesión
+                        Regístrate aquí
                     </Link>
                 </p>
             </div>

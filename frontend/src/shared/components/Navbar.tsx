@@ -1,15 +1,12 @@
 import React from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
-import { useAuthStore } from '@/store/authStore';
+import { useAuth, RoleBadge } from '@/features/auth';
 import { useThemeStore } from '@/store/themeStore';
 
 export const Navbar: React.FC = () => {
-    const user = useAuthStore((s) => s.user);
-    const logout = useAuthStore((s) => s.logout);
+    const { user, logout } = useAuth();
     const darkMode = useThemeStore((s) => s.darkMode);
     const toggleTheme = useThemeStore((s) => s.toggleTheme);
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
 
     // Si no hay sesión activa, no mostramos la barra de navegación interna
@@ -21,8 +18,7 @@ export const Navbar: React.FC = () => {
         }`;
 
     const handleLogout = async () => {
-        await logout();
-        queryClient.clear();
+        await logout(); // useAuth también limpia la caché de TanStack Query
         navigate('/login', { replace: true });
     };
 
@@ -53,15 +49,7 @@ export const Navbar: React.FC = () => {
             <div className="flex items-center gap-4">
                 <div className="text-right text-xs">
                     <p className="font-semibold text-white">{user.full_name}</p>
-                    <span
-                        className={`inline-block mt-0.5 px-2 py-0.5 rounded-full text-[11px] font-bold uppercase ${
-                            user.role === 'admin'
-                                ? 'bg-amber-400 text-amber-950'
-                                : 'bg-blue-800 text-blue-100'
-                        }`}
-                    >
-                        Rol: {user.role}
-                    </span>
+                    <RoleBadge role={user.role} prefix="Rol: " />
                 </div>
 
                 <button

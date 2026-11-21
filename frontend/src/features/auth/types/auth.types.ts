@@ -20,3 +20,5 @@ export interface RegisterFormValues {
     email: string;
     password: string;
 }
+/** Estado de la verificación de sesión: 'checking' mientras se espera GET /auth/me. */
+export type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';

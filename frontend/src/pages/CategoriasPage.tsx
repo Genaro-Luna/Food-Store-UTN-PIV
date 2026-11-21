@@ -19,7 +19,7 @@ import {
     updateCategoria,
     deleteCategoria,
 } from '../api/categorias.actions';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from '@/features/auth';
 import { useNotificationStore } from '@/store/notificationStore';
 import { isForbiddenError } from '@/shared/api/api';
 

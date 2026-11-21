@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
     useReactTable,
     getCoreRowModel,
@@ -10,48 +9,16 @@ import {
 } from '@tanstack/react-table';
 import { DataTable } from '@/shared/components/DataTable';
 import { LoadingState, ErrorState } from '@/shared/components/UiStates';
-import {
-    getAdminUsers,
-    activateUser,
-    deactivateUser,
-} from '../api/auth.actions';
-import type { UsuarioAuth } from '../types/auth.types';
-import { useAuthStore } from '../store/authStore';
+import type { Role, UsuarioAuth } from '../types/auth.types';
+import { useAuth } from '../hooks/useAuth';
+import { useAdminUsers } from '../hooks/useAdminUsers';
+import { RoleBadge } from '../components/RoleBadge';
 
 export const AdminUsersPage: React.FC = () => {
-    const queryClient = useQueryClient();
-    const currentUser = useAuthStore((s) => s.user);
+    const { user: currentUser } = useAuth();
+    const { usuarios, isLoading, isError, error, refetch, activar, desactivar, isUpdating } =
+        useAdminUsers();
     const [sorting, setSorting] = useState<SortingState>([]);
-    const [actionError, setActionError] = useState<string | null>(null);
-
-    const {
-        data: usuarios = [],
-        isLoading,
-        isError,
-        error,
-        refetch,
-    } = useQuery<UsuarioAuth[]>({
-        queryKey: ['admin-usuarios'],
-        queryFn: getAdminUsers,
-    });
-
-    const activateMutation = useMutation({
-        mutationFn: activateUser,
-        onSuccess: () => {
-            setActionError(null);
-            queryClient.invalidateQueries({ queryKey: ['admin-usuarios'] });
-        },
-        onError: (err: Error) => setActionError(err.message),
-    });
-
-    const deactivateMutation = useMutation({
-        mutationFn: deactivateUser,
-        onSuccess: () => {
-            setActionError(null);
-            queryClient.invalidateQueries({ queryKey: ['admin-usuarios'] });
-        },
-        onError: (err: Error) => setActionError(err.message),
-    });
 
     const columns = useMemo<ColumnDef<UsuarioAuth>[]>(
         () => [
@@ -79,20 +46,7 @@ export const AdminUsersPage: React.FC = () => {
             {
                 accessorKey: 'role',
                 header: 'Rol',
-                cell: (info) => {
-                    const role = info.getValue<string>();
-                    return (
-                        <span
-                            className={`text-xs px-2.5 py-1 rounded-full font-bold uppercase ${
-                                role === 'admin'
-                                    ? 'bg-amber-100 text-amber-800'
-                                    : 'bg-blue-100 text-blue-700'
-                            }`}
-                        >
-                            {role}
-                        </span>
-                    );
-                },
+                cell: (info) => <RoleBadge role={info.getValue<Role>()} />,
             },
             {
                 accessorKey: 'disabled',
@@ -124,8 +78,8 @@ export const AdminUsersPage: React.FC = () => {
                             {u.disabled ? (
                                 <button
                                     type="button"
-                                    onClick={() => activateMutation.mutate(u.id)}
-                                    disabled={activateMutation.isPending}
+                                    onClick={() => activar(u.id)}
+                                    disabled={isUpdating}
                                     className="px-3 py-1 bg-green-600 text-white rounded-md text-xs font-semibold hover:bg-green-700 disabled:opacity-50 active:scale-95 transition"
                                 >
                                     Activar
@@ -133,8 +87,8 @@ export const AdminUsersPage: React.FC = () => {
                             ) : (
                                 <button
                                     type="button"
-                                    onClick={() => deactivateMutation.mutate(u.id)}
-                                    disabled={isSelf || deactivateMutation.isPending}
+                                    onClick={() => desactivar(u.id)}
+                                    disabled={isSelf || isUpdating}
                                     title={
                                         isSelf
                                             ? 'No puedes desactivar tu propia cuenta'
@@ -150,7 +104,7 @@ export const AdminUsersPage: React.FC = () => {
                 },
             },
         ],
-        [activateMutation, deactivateMutation, currentUser?.id]
+        [activar, desactivar, isUpdating, currentUser?.id]
     );
 
     const table = useReactTable({
@@ -182,19 +136,6 @@ export const AdminUsersPage: React.FC = () => {
                     Administración de Usuarios
                 </h2>
             </div>
-
-            {actionError && (
-                <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex justify-between items-center">
-                    <span>{actionError}</span>
-                    <button
-                        type="button"
-                        onClick={() => setActionError(null)}
-                        className="font-bold text-red-800 hover:underline text-xs"
-                    >
-                        Cerrar
-                    </button>
-                </div>
-            )}
 
             <DataTable
                 table={table}
