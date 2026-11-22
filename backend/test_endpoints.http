@@ -218,6 +218,9 @@ GET {{baseUrl}}/productos/9
 ###    Clásica, stock 20; producto 8 = Limonada Casera, stock 3)
 ### =========================================================================
 
+### Los pedidos que fallan en 5.5 y 5.7 consumen los ids 2 y 3 (las secuencias
+### de PostgreSQL no vuelven atrás con el rollback), por eso siguen el 4 y el 5.
+
 ### 5.1 Login como juan
 POST {{baseUrl}}/auth/token
 Content-Type: application/x-www-form-urlencoded
@@ -382,7 +385,7 @@ Content-Type: application/json
 ### 5.27 El admin no usa /cancelar sobre pedidos ajenos → 403
 PATCH {{baseUrl}}/pedidos/5/cancelar
 
-### 5.28 El admin cancela con /estado → 200 y el stock del producto 5 vuelve a 25
+### 5.28 El admin cancela con /estado → 200 y el stock del producto 3 vuelve a 10
 PATCH {{baseUrl}}/pedidos/5/estado
 Content-Type: application/json
 
