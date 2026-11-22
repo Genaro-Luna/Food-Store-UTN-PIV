@@ -1,7 +1,7 @@
 import { api } from '@/shared/api/api';
 import type { UsuarioAuth, RegisterFormValues } from '../types/auth.types';
 
-const AUTH_PREFIX = '/api/v1/auth';
+const AUTH_PREFIX = '/auth';
 
 export const requestLogin = async (
     username: string,

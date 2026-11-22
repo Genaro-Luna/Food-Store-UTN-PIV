@@ -1,8 +1,15 @@
-fastapi[standard]
-sqlmodel
-pydantic
-pydantic-settings
-psycopg2-binary
-python-dotenv
-bcrypt
+# Dependencias directas del backend con versiones fijadas (probadas con Python 3.13).
+# Las transitivas las resuelve pip: fijarlas todas rompería la instalación en Windows
+# (por ejemplo uvloop, que solo existe en Linux y macOS).
+fastapi[standard]==0.165.0
+uvicorn[standard]==0.54.0
+sqlmodel==0.0.50
+SQLAlchemy==2.1.9
+pydantic==2.14.4
+pydantic-settings==2.16.3
+email-validator==2.4.0
+psycopg2-binary==2.9.13
 python-jose[cryptography]==3.5.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+python-multipart==0.0.34

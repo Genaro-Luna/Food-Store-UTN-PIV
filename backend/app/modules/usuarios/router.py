@@ -7,7 +7,7 @@ from app.core.unit_of_work import UnitOfWork, get_uow
 from app.modules.usuarios.model import UserCreate, UserPublic
 from app.modules.usuarios.service import UsuarioService
 
-router = APIRouter(prefix="/api/v1/auth", tags=["Autenticación y Usuarios"])
+router = APIRouter(prefix="/auth", tags=["Autenticación y Usuarios"])
 
 
 @router.post("/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
