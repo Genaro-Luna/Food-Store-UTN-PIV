@@ -4,8 +4,11 @@ import type { Producto, ProductoFormValues } from '../types/producto.types';
 const ENDPOINT = '/productos';
 
 export const getProductos = async (): Promise<Producto[]> => {
-    const res = await api.get<Producto[]>(ENDPOINT);
-    return res.data;
+    // Temporal hasta el panel del TPI: la API ahora responde { total, items } paginado.
+    const res = await api.get<{ total: number; items: Producto[] }>(ENDPOINT, {
+        params: { limit: 100 },
+    });
+    return res.data.items;
 };
 
 export const createProducto = async (
