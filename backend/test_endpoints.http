@@ -326,13 +326,13 @@ POST {{baseUrl}}/pedidos
 Content-Type: application/json
 
 {
-  "items": [{ "producto_id": 5, "cantidad": 2 }],
+  "items": [{ "producto_id": 3, "cantidad": 2 }],
   "forma_pago": "EFECTIVO",
   "direccion_entrega": "Belgrano 450, Godoy Cruz"
 }
 
 ### 5.17 Un user no puede cambiar estados → 403
-PATCH {{baseUrl}}/pedidos/2/estado
+PATCH {{baseUrl}}/pedidos/1/estado
 Content-Type: application/json
 
 { "estado": "EN_PREPARACION" }
@@ -353,37 +353,37 @@ GET {{baseUrl}}/pedidos
 GET {{baseUrl}}/pedidos?estado=PENDIENTE
 
 ### 5.22 El admin ve el detalle de un pedido de juan → 200
-GET {{baseUrl}}/pedidos/2
+GET {{baseUrl}}/pedidos/1
 
 ### 5.23 PENDIENTE → EN_PREPARACION → 200
-PATCH {{baseUrl}}/pedidos/2/estado
+PATCH {{baseUrl}}/pedidos/4/estado
 Content-Type: application/json
 
 { "estado": "EN_PREPARACION" }
 
 ### 5.24 EN_PREPARACION → ENTREGADO → 200
-PATCH {{baseUrl}}/pedidos/2/estado
+PATCH {{baseUrl}}/pedidos/4/estado
 Content-Type: application/json
 
 { "estado": "ENTREGADO" }
 
 ### 5.25 ENTREGADO es terminal → 400 (RN-02)
-PATCH {{baseUrl}}/pedidos/2/estado
+PATCH {{baseUrl}}/pedidos/4/estado
 Content-Type: application/json
 
 { "estado": "CANCELADO" }
 
 ### 5.26 PENDIENTE → ENTREGADO salteando un paso → 400
-PATCH {{baseUrl}}/pedidos/3/estado
+PATCH {{baseUrl}}/pedidos/5/estado
 Content-Type: application/json
 
 { "estado": "ENTREGADO" }
 
 ### 5.27 El admin no usa /cancelar sobre pedidos ajenos → 403
-PATCH {{baseUrl}}/pedidos/3/cancelar
+PATCH {{baseUrl}}/pedidos/5/cancelar
 
 ### 5.28 El admin cancela con /estado → 200 y el stock del producto 5 vuelve a 25
-PATCH {{baseUrl}}/pedidos/3/estado
+PATCH {{baseUrl}}/pedidos/5/estado
 Content-Type: application/json
 
 { "estado": "CANCELADO" }

@@ -30,7 +30,7 @@ class ProductoService:
         disponible: Optional[bool] = None,
     ) -> ProductosPaginados:
         with self.uow as uow:
-            total, productos = uow.productos.buscar(
+            total, productos = uow.productos.search(
                 skip=skip,
                 limit=limit,
                 search=search,

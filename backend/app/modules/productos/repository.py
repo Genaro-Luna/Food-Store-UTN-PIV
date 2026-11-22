@@ -24,7 +24,7 @@ class ProductoRepository(BaseRepository[Producto]):
         statement = select(Producto).where(func.lower(Producto.nombre) == nombre.lower())
         return self.session.exec(statement).first()
 
-    def buscar(
+    def search(
         self,
         *,
         skip: int,

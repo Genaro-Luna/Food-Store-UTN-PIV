@@ -17,7 +17,7 @@ class PedidoRepository(BaseRepository[Pedido]):
         statement = select(Pedido).where(Pedido.id == pedido_id).options(selectinload(Pedido.items))
         return self.session.exec(statement).first()
 
-    def buscar(
+    def list_by_usuario(
         self,
         *,
         skip: int,
@@ -25,7 +25,8 @@ class PedidoRepository(BaseRepository[Pedido]):
         usuario_id: Optional[int] = None,
         estado: Optional[str] = None,
     ) -> tuple[int, list[Pedido]]:
-        """Pedidos paginados, del más nuevo al más viejo. Devuelve (total, página)."""
+        """Pedidos paginados, del más nuevo al más viejo. Devuelve (total, página).
+        Con usuario_id=None lista los de todos los usuarios (vista del admin)."""
         filtros = []
         if usuario_id is not None:
             filtros.append(Pedido.usuario_id == usuario_id)
@@ -43,7 +44,7 @@ class PedidoRepository(BaseRepository[Pedido]):
         )
         return total, list(self.session.exec(statement).all())
 
-    def contar_por_estado(self) -> dict[str, int]:
+    def count_by_estado(self) -> dict[str, int]:
         statement = select(Pedido.estado, func.count()).group_by(Pedido.estado)
         return {estado: cantidad for estado, cantidad in self.session.exec(statement).all()}
 
