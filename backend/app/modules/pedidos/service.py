@@ -114,7 +114,7 @@ class PedidoService:
         """RN-04: el admin ve todos; un user, solo los suyos."""
         usuario_id = None if usuario.role == "admin" else usuario.id
         with self.uow as uow:
-            total, pedidos = uow.pedidos.buscar(
+            total, pedidos = uow.pedidos.list_by_usuario(
                 skip=skip, limit=limit, usuario_id=usuario_id, estado=estado
             )
             return PedidosPaginados(
@@ -148,7 +148,7 @@ class PedidoService:
 
     def resumen(self) -> ResumenPedidos:
         with self.uow as uow:
-            conteos = uow.pedidos.contar_por_estado()
+            conteos = uow.pedidos.count_by_estado()
             desde, hasta = rango_de_hoy_utc()
             return ResumenPedidos(
                 pendientes=conteos.get("PENDIENTE", 0),

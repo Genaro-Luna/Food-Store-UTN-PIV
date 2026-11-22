@@ -35,8 +35,9 @@ PRODUCTOS = [
     ("Acompañamientos", "Papas Fritas", "Porción mediana, crocantes", 3500.0, 30),
     ("Acompañamientos", "Aros de Cebolla", "Rebozados en cerveza, con salsa barbacoa", 4200.0, 25),
     ("Acompañamientos", "Nuggets de Pollo", "Seis unidades con salsa a elección", 5200.0, 18),
-    ("Bebidas", "Gaseosa 500 ml", "Línea Coca-Cola, bien fría", 2200.0, 40),
-    ("Bebidas", "Limonada Casera", "Con menta y jengibre (stock bajo para probar RN-01)", 2800.0, 3),
+    ("Bebidas", "Gaseosa 500 ml", "Cola, lima-limón o naranja, bien fría", 2200.0, 40),
+    # Stock bajo a propósito: sirve para mostrar StockInsuficiente (RN-01).
+    ("Bebidas", "Limonada Casera", "Con menta y jengibre", 2800.0, 3),
 ]
 
 
