@@ -212,3 +212,185 @@ DELETE {{baseUrl}}/productos/9
 
 ### 4.13 Producto dado de baja → 404
 GET {{baseUrl}}/productos/9
+
+### =========================================================================
+### 5. PEDIDOS (correr con la base recién sembrada: producto 1 = Hamburguesa
+###    Clásica, stock 20; producto 8 = Limonada Casera, stock 3)
+### =========================================================================
+
+### 5.1 Login como juan
+POST {{baseUrl}}/auth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=juan&password=Juan1234!
+
+### 5.2 Crear pedido → 201, estado PENDIENTE, total 20500 (8500 × 2 + 3500)
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [
+    { "producto_id": 1, "cantidad": 2 },
+    { "producto_id": 4, "cantidad": 1 }
+  ],
+  "forma_pago": "EFECTIVO",
+  "direccion_entrega": "Av. San Martín 1234, Mendoza",
+  "notas": "Sin cebolla"
+}
+
+### 5.3 El stock del producto 1 bajó de 20 a 18 (RN-01)
+GET {{baseUrl}}/productos/1
+
+### 5.4 Producto repetido en el pedido → 400
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [
+    { "producto_id": 1, "cantidad": 1 },
+    { "producto_id": 1, "cantidad": 1 }
+  ],
+  "forma_pago": "EFECTIVO",
+  "direccion_entrega": "Av. San Martín 1234"
+}
+
+### 5.5 Stock insuficiente en el segundo ítem → 400 ...
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [
+    { "producto_id": 1, "cantidad": 1 },
+    { "producto_id": 8, "cantidad": 10 }
+  ],
+  "forma_pago": "TRANSFERENCIA",
+  "direccion_entrega": "Av. San Martín 1234"
+}
+
+### 5.6 ... y el stock del producto 1 sigue en 18: se revirtió todo (rollback)
+GET {{baseUrl}}/productos/1
+
+### 5.7 Producto inexistente → 404
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [{ "producto_id": 999, "cantidad": 1 }],
+  "forma_pago": "EFECTIVO",
+  "direccion_entrega": "Av. San Martín 1234"
+}
+
+### 5.8 Forma de pago inválida y dirección corta → 422 (RN-06)
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [{ "producto_id": 1, "cantidad": 1 }],
+  "forma_pago": "TARJETA",
+  "direccion_entrega": "abc"
+}
+
+### 5.9 Pedido sin ítems → 422
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{ "items": [], "forma_pago": "EFECTIVO", "direccion_entrega": "Av. San Martín 1234" }
+
+### 5.10 Mis pedidos → 200 con total 1
+GET {{baseUrl}}/pedidos
+
+### 5.11 Detalle de mi pedido → 200 con las líneas y los precios copiados
+GET {{baseUrl}}/pedidos/1
+
+### 5.12 Cancelar mi pedido PENDIENTE → 200, estado CANCELADO
+PATCH {{baseUrl}}/pedidos/1/cancelar
+
+### 5.13 El stock del producto 1 volvió a 20 (RN-03)
+GET {{baseUrl}}/productos/1
+
+### 5.14 Cancelar otra vez → 400 (ya no está PENDIENTE)
+PATCH {{baseUrl}}/pedidos/1/cancelar
+
+### 5.15 Nuevo pedido (id 2) para el flujo del admin
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [{ "producto_id": 2, "cantidad": 1 }],
+  "forma_pago": "TRANSFERENCIA",
+  "direccion_entrega": "Belgrano 450, Godoy Cruz"
+}
+
+### 5.16 Otro pedido (id 3)
+POST {{baseUrl}}/pedidos
+Content-Type: application/json
+
+{
+  "items": [{ "producto_id": 5, "cantidad": 2 }],
+  "forma_pago": "EFECTIVO",
+  "direccion_entrega": "Belgrano 450, Godoy Cruz"
+}
+
+### 5.17 Un user no puede cambiar estados → 403
+PATCH {{baseUrl}}/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "EN_PREPARACION" }
+
+### 5.18 Un user no ve el resumen → 403
+GET {{baseUrl}}/pedidos/resumen
+
+### 5.19 Login como admin
+POST {{baseUrl}}/auth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=admin&password=Admin1234!
+
+### 5.20 El admin ve todos los pedidos → 200 con total 3
+GET {{baseUrl}}/pedidos
+
+### 5.21 Filtro por estado → solo los PENDIENTE
+GET {{baseUrl}}/pedidos?estado=PENDIENTE
+
+### 5.22 El admin ve el detalle de un pedido de juan → 200
+GET {{baseUrl}}/pedidos/2
+
+### 5.23 PENDIENTE → EN_PREPARACION → 200
+PATCH {{baseUrl}}/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "EN_PREPARACION" }
+
+### 5.24 EN_PREPARACION → ENTREGADO → 200
+PATCH {{baseUrl}}/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+### 5.25 ENTREGADO es terminal → 400 (RN-02)
+PATCH {{baseUrl}}/pedidos/2/estado
+Content-Type: application/json
+
+{ "estado": "CANCELADO" }
+
+### 5.26 PENDIENTE → ENTREGADO salteando un paso → 400
+PATCH {{baseUrl}}/pedidos/3/estado
+Content-Type: application/json
+
+{ "estado": "ENTREGADO" }
+
+### 5.27 El admin no usa /cancelar sobre pedidos ajenos → 403
+PATCH {{baseUrl}}/pedidos/3/cancelar
+
+### 5.28 El admin cancela con /estado → 200 y el stock del producto 5 vuelve a 25
+PATCH {{baseUrl}}/pedidos/3/estado
+Content-Type: application/json
+
+{ "estado": "CANCELADO" }
+
+### 5.29 Resumen → pendientes 0, en_preparacion 0, entregados 1, cancelados 2,
+###      pedidos_hoy 3, ingresos_entregados 11200
+GET {{baseUrl}}/pedidos/resumen
+
+### 5.30 Pedido inexistente → 404
+GET {{baseUrl}}/pedidos/999
