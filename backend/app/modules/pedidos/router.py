@@ -1,86 +1,103 @@
-from typing import Annotated
-from fastapi import APIRouter, Depends, HTTPException, Response, status
+from typing import Annotated, Optional
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+
 from app.core.deps import get_current_active_user, require_role
-from app.core.legacy_uow import LegacyUnitOfWork as UnitOfWork, get_uow  # temporal
-from app.modules.usuarios.schemas import UserPublic
 from app.modules.pedidos.schemas import (
+    CambioEstado,
+    EstadoPedido,
     PedidoCreate,
-    PedidoUpdate,
     PedidoRead,
-    PedidoReadWithDetalles,
+    PedidosPaginados,
+    ResumenPedidos,
 )
 from app.modules.pedidos.service import (
-    PedidoService,
+    PedidoAjeno,
+    PedidoNoCancelable,
     PedidoNoEncontrado,
-    ProductoNoEncontrado,
-    EstadoPedidoTerminalError,
+    PedidoService,
+    ProductoNoDisponible,
+    ProductoRepetido,
+    StockInsuficiente,
+    TransicionInvalida,
 )
+from app.modules.pedidos.unit_of_work import PedidoUnitOfWork
+from app.modules.productos.service import ProductoNoEncontrado
+from app.modules.usuarios.schemas import UserPublic
 
 router = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
-
-@router.get("", response_model=list[PedidoRead])
-@router.get("/", response_model=list[PedidoRead], include_in_schema=False)
-def listar_pedidos(
-    _user: Annotated[UserPublic, Depends(get_current_active_user)],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    with uow:
-        return PedidoService(uow).listar()
+UsuarioActual = Annotated[UserPublic, Depends(get_current_active_user)]
+AdminActual = Annotated[UserPublic, Depends(require_role(["admin"]))]
 
 
-@router.get("/{pedido_id}", response_model=PedidoReadWithDetalles)
-def obtener_pedido(
-    pedido_id: int,
-    _user: Annotated[UserPublic, Depends(get_current_active_user)],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
+def get_pedido_service() -> PedidoService:
+    return PedidoService(PedidoUnitOfWork())
+
+
+ServicioPedidos = Annotated[PedidoService, Depends(get_pedido_service)]
+
+
+def _error(codigo: int, e: Exception) -> HTTPException:
+    return HTTPException(status_code=codigo, detail=str(e))
+
+
+@router.post("", response_model=PedidoRead, status_code=status.HTTP_201_CREATED)
+def crear_pedido(data: PedidoCreate, usuario: UsuarioActual, service: ServicioPedidos):
     try:
-        with uow:
-            return PedidoService(uow).obtener(pedido_id)
-    except PedidoNoEncontrado as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-
-
-@router.post("", response_model=PedidoReadWithDetalles, status_code=status.HTTP_201_CREATED)
-@router.post("/", response_model=PedidoReadWithDetalles, status_code=status.HTTP_201_CREATED, include_in_schema=False)
-def crear_pedido(
-    data: PedidoCreate,
-    _user: Annotated[UserPublic, Depends(require_role(["user", "admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    try:
-        with uow:
-            return PedidoService(uow).crear(data)
+        return service.crear(data, usuario_id=usuario.id)
     except ProductoNoEncontrado as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        raise _error(status.HTTP_404_NOT_FOUND, e)
+    except (ProductoRepetido, ProductoNoDisponible, StockInsuficiente) as e:
+        raise _error(status.HTTP_400_BAD_REQUEST, e)
 
 
-@router.put("/{pedido_id}", response_model=PedidoRead)
-def actualizar_estado_pedido(
-    pedido_id: int,
-    data: PedidoUpdate,
-    _admin: Annotated[UserPublic, Depends(require_role(["admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
+@router.get("", response_model=PedidosPaginados)
+def listar_pedidos(
+    usuario: UsuarioActual,
+    service: ServicioPedidos,
+    skip: Annotated[int, Query(ge=0)] = 0,
+    limit: Annotated[int, Query(ge=1, le=100)] = 20,
+    estado: Optional[EstadoPedido] = None,
+):
+    return service.listar(usuario, skip, limit, estado)
+
+
+# Declarada antes de /{pedido_id}: si no, FastAPI intentaría leer "resumen" como id.
+@router.get("/resumen", response_model=ResumenPedidos)
+def resumen_pedidos(_admin: AdminActual, service: ServicioPedidos):
+    return service.resumen()
+
+
+@router.get("/{pedido_id}", response_model=PedidoRead)
+def obtener_pedido(pedido_id: int, usuario: UsuarioActual, service: ServicioPedidos):
+    try:
+        return service.obtener(pedido_id, usuario)
+    except PedidoNoEncontrado as e:
+        raise _error(status.HTTP_404_NOT_FOUND, e)
+    except PedidoAjeno as e:
+        raise _error(status.HTTP_403_FORBIDDEN, e)
+
+
+@router.patch("/{pedido_id}/estado", response_model=PedidoRead)
+def cambiar_estado(
+    pedido_id: int, data: CambioEstado, _admin: AdminActual, service: ServicioPedidos
 ):
     try:
-        with uow:
-            return PedidoService(uow).actualizar_estado(pedido_id, data)
+        return service.cambiar_estado(pedido_id, data.estado)
     except PedidoNoEncontrado as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
-    except EstadoPedidoTerminalError as e:
-        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
+        raise _error(status.HTTP_404_NOT_FOUND, e)
+    except TransicionInvalida as e:
+        raise _error(status.HTTP_400_BAD_REQUEST, e)
 
 
-@router.delete("/{pedido_id}", status_code=status.HTTP_204_NO_CONTENT)
-def eliminar_pedido(
-    pedido_id: int,
-    _admin: Annotated[UserPublic, Depends(require_role(["admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
+@router.patch("/{pedido_id}/cancelar", response_model=PedidoRead)
+def cancelar_pedido(pedido_id: int, usuario: UsuarioActual, service: ServicioPedidos):
     try:
-        with uow:
-            PedidoService(uow).eliminar(pedido_id)
-            return Response(status_code=status.HTTP_204_NO_CONTENT)
+        return service.cancelar(pedido_id, usuario)
     except PedidoNoEncontrado as e:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+        raise _error(status.HTTP_404_NOT_FOUND, e)
+    except PedidoAjeno as e:
+        raise _error(status.HTTP_403_FORBIDDEN, e)
+    except (PedidoNoCancelable, TransicionInvalida) as e:
+        raise _error(status.HTTP_400_BAD_REQUEST, e)

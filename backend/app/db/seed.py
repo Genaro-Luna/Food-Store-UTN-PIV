@@ -9,6 +9,7 @@ from app.core.security import hash_password
 from app.core.unit_of_work import UnitOfWork
 from app.modules.categorias.models import Categoria
 from app.modules.categorias.repository import CategoriaRepository
+from app.modules.pedidos.models import DetallePedido, Pedido  # noqa: F401  (registra las relaciones)
 from app.modules.productos.models import Producto
 from app.modules.productos.repository import ProductoRepository
 from app.modules.usuarios.models import Usuario
