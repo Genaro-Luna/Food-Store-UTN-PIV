@@ -1,309 +1,214 @@
+# Pruebas manuales de la API (extensión REST Client de VS Code o cliente HTTP de JetBrains).
+# El cliente guarda la cookie access_token del login y la reenvía sola.
+# Antes de empezar: base vacía + `python -m app.db.seed` + `uvicorn app.main:app --reload`.
+
 @baseUrl = http://localhost:8000/api/v1
 
 ### =========================================================================
-### BLOQUE 1: SEGURIDAD SIN SESIÓN (Debe rechazar con 401 Unauthorized - RN-10)
+### 1. AUTENTICACIÓN
 ### =========================================================================
 
-### 1.1 Asegurar que no haya cookie activa en el cliente HTTP
-POST {{baseUrl}}/auth/logout
-
-### 1.2 Intentar consultar perfil sin sesión (Responde 401 No autenticado)
+### 1.1 Sin sesión → 401
 GET {{baseUrl}}/auth/me
 
-### 1.3 Intentar listar categorías sin haber iniciado sesión (Responde 401)
-GET {{baseUrl}}/categorias
-
-### 1.4 Intentar autenticarse con encabezado Authorization: Bearer en vez de Cookie (RN-03: Responde 401)
-GET {{baseUrl}}/auth/me
-Authorization: Bearer token_falso_o_robado_que_el_backend_ignora
-
-
-### =========================================================================
-### BLOQUE 2: REGISTRO DE USUARIOS Y VALIDACIONES (HU-01, RN-01, RN-02, RN-08, RN-09)
-### =========================================================================
-
-### 2.1 Registrar un usuario nuevo válido (Responde 201 Created con rol "user" y sin hashed_password)
+### 1.2 Registro de un cliente nuevo → 201 con role "user" y sin hashed_password
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "piloto_tc",
-  "full_name": "Genaro Simracer",
-  "email": "piloto@utn.edu.ar",
-  "password": "Password123!"
+  "username": "cliente1",
+  "full_name": "Cliente de Prueba",
+  "email": "cliente1@foodstore.com",
+  "password": "Cliente1234!"
 }
 
-### 2.2 Excepción 409 Conflict: Intentar registrar un username o email que ya existe (RN-02)
+### 1.3 Registro con username o email repetido → 409
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
   "username": "juan",
   "full_name": "Juan Duplicado",
-  "email": "juan@utn.edu.ar",
+  "email": "otro@foodstore.com",
   "password": "Password123!"
 }
 
-### 2.3 Excepción 422 Unprocessable Entity: Contraseña menor a 8 caracteres y email inválido (RN-09)
+### 1.4 Registro con contraseña corta y email inválido → 422
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-  "username": "user_invalido",
+  "username": "invalido",
   "full_name": "Usuario Inválido",
   "email": "correo-sin-arroba",
   "password": "123"
 }
 
-
-### =========================================================================
-### BLOQUE 3: PRUEBAS CON ROL "user" (Lectura 200, Pedidos 201, Escritura 403)
-### =========================================================================
-
-### 3.1 Excepción 401 en Login: Credenciales incorrectas (HU-02)
+### 1.5 Login con contraseña incorrecta → 401
 POST {{baseUrl}}/auth/token
 Content-Type: application/x-www-form-urlencoded
 
-username=juan&password=ClaveErronea123
+username=admin&password=incorrecta
 
-### 3.2 Login exitoso como usuario estándar "juan" (Guarda cookie HttpOnly access_token)
+### 1.6 Login como juan (user) → 200 {"message": "Login exitoso"} + cookie
 POST {{baseUrl}}/auth/token
 Content-Type: application/x-www-form-urlencoded
 
 username=juan&password=Juan1234!
 
-### 3.3 Obtener datos del usuario autenticado (Responde 200 OK con rol "user")
+### 1.7 Perfil de la sesión → 200 con created_at
 GET {{baseUrl}}/auth/me
 
-### 3.4 Lectura permitida para rol "user" (RN-07: Responde 200 OK)
-GET {{baseUrl}}/categorias
-
-### 3.5 Excepción 403 Forbidden: Usuario "user" intenta crear una categoría (HU-05 / RN-04)
+### 1.8 Un user no puede escribir en el catálogo → 403
 POST {{baseUrl}}/categorias
 Content-Type: application/json
 
-{
-  "nombre": "Categoría Prohibida",
-  "descripcion": "No debería crearse porque juan no es admin"
-}
+{ "nombre": "Prohibida" }
 
-### 3.6 Excepción 403 Forbidden: Usuario "user" intenta eliminar un producto (HU-05 / RN-04)
-DELETE {{baseUrl}}/productos/1
-
-### 3.7 Excepción 403 Forbidden: Usuario "user" intenta listar usuarios de administración
+### 1.9 Un user no puede listar usuarios → 403
 GET {{baseUrl}}/admin/usuarios
 
-### 3.8 Excepción permitida (RN-05): Usuario "user" SÍ puede crear un Pedido (Responde 201 Created)
-POST {{baseUrl}}/pedidos
-Content-Type: application/json
-
-{
-  "detalles": [
-    { "producto_id": 1, "cantidad": 2 },
-    { "producto_id": 2, "cantidad": 1 }
-  ]
-}
-
-### 3.9 Cerrar sesión de "juan" (HU-03: Borra la cookie HttpOnly)
+### 1.10 Logout → 200 {"message": "Sesión cerrada"}
 POST {{baseUrl}}/auth/logout
 
-
 ### =========================================================================
-### BLOQUE 4: LOGIN COMO "admin" Y GESTIÓN DE USUARIOS (Activar / Desactivar)
+### 2. USUARIOS (admin)
 ### =========================================================================
 
-### 4.1 Login exitoso como Administrador ("admin")
+### 2.1 Login como admin
 POST {{baseUrl}}/auth/token
 Content-Type: application/x-www-form-urlencoded
 
 username=admin&password=Admin1234!
 
-### 4.2 Listar todos los usuarios (Exclusivo admin - Responde 200 OK)
+### 2.2 Listar usuarios → 200
 GET {{baseUrl}}/admin/usuarios
 
-### 4.3 Desactivar al usuario con ID 2 ("juan") (Borrado lógico en Usuario: disabled = true)
+### 2.3 Desactivar a juan (id 2) → 200 con disabled: true
 POST {{baseUrl}}/admin/usuarios/2/desactivar
 
-### 4.4 Reactivar al usuario con ID 2 ("juan") (disabled = false)
+### 2.4 Desactivar de nuevo → 200 igual (idempotente)
+POST {{baseUrl}}/admin/usuarios/2/desactivar
+
+### 2.5 El admin no puede desactivarse a sí mismo (id 1) → 400
+POST {{baseUrl}}/admin/usuarios/1/desactivar
+
+### 2.6 Usuario inexistente → 404
+POST {{baseUrl}}/admin/usuarios/999/activar
+
+### 2.7 Reactivar a juan → 200 con disabled: false
 POST {{baseUrl}}/admin/usuarios/2/activar
 
-### 4.5 Excepción 404 Not Found: Intentar desactivar un usuario inexistente (ID 99)
-POST {{baseUrl}}/admin/usuarios/99/desactivar
-
-
 ### =========================================================================
-### BLOQUE 5: CRUD DE CATEGORÍAS E INGREDIENTES + BORRADO LÓGICO Y REACTIVACIÓN
+### 3. CATEGORÍAS (lecturas públicas, escrituras admin; sigue la sesión de admin)
 ### =========================================================================
 
-### 5.1 Crear Categoría (Responde 201 Created)
-POST {{baseUrl}}/categorias
-Content-Type: application/json
-
-{
-  "nombre": "Periféricos Simracing",
-  "descripcion": "Volantes, pedales y bases Force Feedback"
-}
-
-### 5.2 Excepción 409 Conflict: Crear categoría con nombre duplicado activo
-POST {{baseUrl}}/categorias
-Content-Type: application/json
-
-{
-  "nombre": "Periféricos Simracing",
-  "descripcion": "Intento duplicado"
-}
-
-### 5.3 Listar todas las categorías activas (Responde 200 OK)
+### 3.1 Listar → 200 (también funciona sin sesión)
 GET {{baseUrl}}/categorias
 
-### 5.4 Excepción 404 Not Found: Buscar una categoría inexistente (ID 99)
-GET {{baseUrl}}/categorias/99
+### 3.2 Detalle → 200
+GET {{baseUrl}}/categorias/1
 
-### 5.5 Actualizar una categoría (PUT - Responde 200 OK)
-PUT {{baseUrl}}/categorias/3
-Content-Type: application/json
+### 3.3 Detalle inexistente → 404
+GET {{baseUrl}}/categorias/999
 
-{
-  "nombre": "Bebidas Frías",
-  "descripcion": "Gaseosas, aguas y cervezas artesanales"
-}
-
-### 5.6 Excepción 409 Conflict: Intentar eliminar Categoría 1 que tiene productos activos asociados
-DELETE {{baseUrl}}/categorias/1
-
-### 5.7 Eliminar lógicamente Categoría 3 (sin productos asociados - Responde 200 OK y pasa activo=False)
-DELETE {{baseUrl}}/categorias/3
-
-### 5.8 Reactivación automática: Volver a crear la categoría eliminada lógicamente la reactiva con los nuevos datos
+### 3.4 Crear → 201
 POST {{baseUrl}}/categorias
 Content-Type: application/json
 
-{
-  "nombre": "Bebidas Frías",
-  "descripcion": "Categoría reactivada con descripción actualizada"
-}
+{ "nombre": "Postres", "descripcion": "Dulces caseros" }
 
-### =========================================================================
-### BLOQUE 6: CRUD DE PRODUCTOS Y RELACIÓN MUCHOS A MUCHOS (N:N)
-### =========================================================================
-
-### 6.1 Crear un Producto (Volante Logitech G923 - Responde 201 Created)
-POST {{baseUrl}}/productos
+### 3.5 Nombre repetido, sin distinguir mayúsculas → 409
+POST {{baseUrl}}/categorias
 Content-Type: application/json
 
-{
-  "nombre": "Volante Logitech G923",
-  "descripcion": "Volante con tecnología TrueForce y pedales",
-  "precio_base": 850000,
-  "disponible": true,
-  "imagen_url": ["https://ejemplo.com/g923-1.jpg"]
-}
+{ "nombre": "postres" }
 
-### 6.2 Crear otro Producto para pruebas de borrado (Assetto Corsa - Responde 201 Created)
-POST {{baseUrl}}/productos
+### 3.6 Nombre de 1 carácter → 422
+POST {{baseUrl}}/categorias
 Content-Type: application/json
 
-{
-  "nombre": "Assetto Corsa",
-  "descripcion": "Simulador de carreras base para mods",
-  "precio_base": 15000,
-  "disponible": true,
-  "imagen_url": ["https://ejemplo.com/ac.jpg"]
-}
+{ "nombre": "P" }
 
-### 6.3 Listar todos los productos activos (Responde 200 OK)
-GET {{baseUrl}}/productos
+### 3.7 Editar (parcial) → 200
+PUT {{baseUrl}}/categorias/4
+Content-Type: application/json
 
-### 6.4 Obtener un producto específico con sus categorías (Relación N:N - Responde 200 OK)
+{ "descripcion": "Postres y helados artesanales" }
+
+### 3.8 Baja lógica → 204 sin cuerpo
+DELETE {{baseUrl}}/categorias/4
+
+### 3.9 La categoría dada de baja ya no existe para la API → 404
+GET {{baseUrl}}/categorias/4
+
+### 3.10 La baja no libera el nombre → 409
+POST {{baseUrl}}/categorias
+Content-Type: application/json
+
+{ "nombre": "Postres" }
+
+### =========================================================================
+### 4. PRODUCTOS
+### =========================================================================
+
+### 4.1 Listado paginado → 200 {"total": 8, "items": [...]}
+GET {{baseUrl}}/productos?skip=0&limit=5
+
+### 4.2 Segunda página
+GET {{baseUrl}}/productos?skip=5&limit=5
+
+### 4.3 Búsqueda sin distinguir mayúsculas
+GET {{baseUrl}}/productos?search=HAMBURGUESA
+
+### 4.4 Filtro por categoría y disponibilidad
+GET {{baseUrl}}/productos?categoria_id=3&disponible=true
+
+### 4.5 limit mayor a 100 → 422
+GET {{baseUrl}}/productos?limit=500
+
+### 4.6 Detalle con la categoría anidada → 200
 GET {{baseUrl}}/productos/1
 
-### 6.5 Excepción 404 Not Found: Buscar un producto inexistente (ID 99)
-GET {{baseUrl}}/productos/99
-
-### 6.6 Actualizar un Producto (PUT - Modificando el precio base)
-PUT {{baseUrl}}/productos/3
+### 4.7 Crear → 201
+POST {{baseUrl}}/productos
 Content-Type: application/json
 
 {
-  "precio_base": 900000
+  "nombre": "Brownie",
+  "descripcion": "Con nueces",
+  "precio_base": 3900,
+  "imagen_url": "https://placehold.co/600x400?text=Brownie",
+  "stock": 12,
+  "categoria_id": 1
 }
 
-### 6.7 Relación N:N: Asociar Producto 3 (Volante) a Categoría 4 (Periféricos Simracing)
-POST {{baseUrl}}/productos/3/categorias/4
-
-### 6.8 Excepción 409 Conflict en N:N: Intentar asociar nuevamente el mismo Producto a la misma Categoría
-POST {{baseUrl}}/productos/3/categorias/4
-
-### 6.9 Excepción 404 Not Found en N:N: Intentar asociar el Producto 1 a una Categoría inexistente (ID 99)
-POST {{baseUrl}}/productos/1/categorias/99
-
-### 6.10 Borrado lógico de Producto (DELETE sobre Producto 4 - Marca activo=False)
-DELETE {{baseUrl}}/productos/4
-
-### 6.11 Verificar que el Producto 4 eliminado lógicamente ya no se devuelve (Responde 404 Not Found)
-GET {{baseUrl}}/productos/4
-
-
-### =========================================================================
-### BLOQUE 7: PRUEBAS DE PEDIDOS, VALIDACIONES Y ROLLBACK DEL UNIT OF WORK
-### =========================================================================
-
-### 7.1 Listar todos los pedidos activos (Responde 200 OK)
-GET {{baseUrl}}/pedidos
-
-### 7.2 Obtener el pedido 1 con sus detalles (Responde 200 OK)
-GET {{baseUrl}}/pedidos/1
-
-### 7.3 Actualizar el estado del pedido 1 a CONFIRMADO (PUT - Responde 200 OK)
-PUT {{baseUrl}}/pedidos/1
+### 4.8 Crear con categoría dada de baja (la 4) → 404
+POST {{baseUrl}}/productos
 Content-Type: application/json
 
-{
-  "estado": "CONFIRMADO"
-}
+{ "nombre": "Flan", "precio_base": 3000, "categoria_id": 4 }
 
-### 7.4 Excepción 422: Producto repetido en dos detalles del mismo pedido (RN-12)
-POST {{baseUrl}}/pedidos
+### 4.9 Precio y stock negativos → 422
+POST {{baseUrl}}/productos
 Content-Type: application/json
 
-{
-  "detalles": [
-    { "producto_id": 1, "cantidad": 1 },
-    { "producto_id": 1, "cantidad": 3 }
-  ]
-}
+{ "nombre": "Inválido", "precio_base": -1, "stock": -5, "categoria_id": 1 }
 
-### 7.5 Excepción 422: Cantidad menor que 1
-POST {{baseUrl}}/pedidos
+### 4.10 Editar → 200
+PUT {{baseUrl}}/productos/9
 Content-Type: application/json
 
-{
-  "detalles": [
-    { "producto_id": 1, "cantidad": 0 }
-  ]
-}
+{ "precio_base": 4100 }
 
-### 7.6 Excepción 422: Estado fuera de los permitidos en PUT
-PUT {{baseUrl}}/pedidos/1
+### 4.11 Cambiar stock y disponibilidad → 200
+PATCH {{baseUrl}}/productos/9/stock
 Content-Type: application/json
 
-{
-  "estado": "EN_PREPARACION_INVALIDO"
-}
+{ "stock": 0, "disponible": false }
 
-### 7.7 Excepción 404 + Rollback atómico del Unit of Work: Producto inexistente (ID 99) en el segundo detalle
-POST {{baseUrl}}/pedidos
-Content-Type: application/json
+### 4.12 Baja lógica → 204
+DELETE {{baseUrl}}/productos/9
 
-{
-  "detalles": [
-    { "producto_id": 1, "cantidad": 1 },
-    { "producto_id": 99, "cantidad": 2 }
-  ]
-}
-
-### 7.8 Eliminar pedido 1 lógicamente (DELETE - Responde 204 No Content)
-DELETE {{baseUrl}}/pedidos/1
-
-### 7.9 Excepción 404 Not Found: Intentar consultar el pedido 1 ya eliminado lógicamente (RN-11)
-GET {{baseUrl}}/pedidos/1
+### 4.13 Producto dado de baja → 404
+GET {{baseUrl}}/productos/9

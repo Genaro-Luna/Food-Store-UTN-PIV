@@ -22,8 +22,8 @@ engine = create_engine(DATABASE_URL, connect_args=_connect_args)
 def create_all_tables() -> None:
     """Crea las tablas que falten. Importar los modelos los registra en la metadata."""
     from app.modules.usuarios.models import Usuario  # noqa: F401
-    from app.modules.categoria.model import Categoria  # noqa: F401
-    from app.modules.producto.model import Producto, ProductoCategoria  # noqa: F401
+    from app.modules.categorias.models import Categoria  # noqa: F401
+    from app.modules.productos.models import Producto  # noqa: F401
     from app.modules.pedidos.model import Pedido, DetallePedido  # noqa: F401
 
     SQLModel.metadata.create_all(engine)
