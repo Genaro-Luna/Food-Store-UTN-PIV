@@ -35,9 +35,6 @@ export const Navbar: React.FC = () => {
                     <NavLink to="/productos" className={linkClass}>
                         Productos
                     </NavLink>
-                    <NavLink to="/ingredientes" className={linkClass}>
-                        Ingredientes
-                    </NavLink>
                     {user.role === 'admin' && (
                         <NavLink to="/admin/users" className={linkClass}>
                             Usuarios

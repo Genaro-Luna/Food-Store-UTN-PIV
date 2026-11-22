@@ -1,87 +1,42 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Response, status
-from fastapi.security import OAuth2PasswordRequestForm
-from app.core.config import settings
-from app.core.deps import get_current_active_user, require_role
-from app.core.unit_of_work import UnitOfWork, get_uow
-from app.modules.usuarios.model import UserCreate, UserPublic
-from app.modules.usuarios.service import UsuarioService
 
-router = APIRouter(prefix="/auth", tags=["Autenticación y Usuarios"])
+from fastapi import APIRouter, Depends, HTTPException, status
 
+from app.core.deps import require_role
+from app.modules.usuarios.schemas import UserPublic
+from app.modules.usuarios.service import AutoDesactivacion, UsuarioNoEncontrado, UsuarioService
+from app.modules.usuarios.unit_of_work import UsuarioUnitOfWork
 
-@router.post("/register", response_model=UserPublic, status_code=status.HTTP_201_CREATED)
-def register(
-    user_in: UserCreate,
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    with uow:
-        return UsuarioService(uow).register(user_in)
+router = APIRouter(prefix="/admin/usuarios", tags=["Usuarios (admin)"])
+
+AdminActual = Annotated[UserPublic, Depends(require_role(["admin"]))]
 
 
-@router.post("/token")
-def login(
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-    response: Response,
-):
-    with uow:
-        service = UsuarioService(uow)
-        token = service.authenticate(form_data.username, form_data.password)
-
-    response.set_cookie(
-        key="access_token",
-        value=token.access_token,
-        httponly=True,
-        max_age=settings.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        samesite="lax",
-        secure=False,
-    )
-    return {"mensaje": "Login exitoso. Sesión iniciada."}
+def get_usuario_service() -> UsuarioService:
+    return UsuarioService(UsuarioUnitOfWork())
 
 
-@router.post("/logout")
-def logout(response: Response):
-    response.delete_cookie(
-        key="access_token",
-        httponly=True,
-        samesite="lax",
-        secure=False,
-    )
-    return {"mensaje": "Sesión cerrada correctamente."}
+ServicioUsuarios = Annotated[UsuarioService, Depends(get_usuario_service)]
 
 
-@router.get("/me", response_model=UserPublic)
-def read_users_me(
-    current_user: Annotated[UserPublic, Depends(get_current_active_user)],
-):
-    return current_user
+@router.get("", response_model=list[UserPublic])
+def listar_usuarios(_admin: AdminActual, service: ServicioUsuarios):
+    return service.listar()
 
 
-@router.get("/admin/usuarios", response_model=list[UserPublic])
-def list_users(
-    _admin: Annotated[UserPublic, Depends(require_role(["admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    with uow:
-        return UsuarioService(uow).list_all()
+@router.post("/{user_id}/activar", response_model=UserPublic)
+def activar_usuario(user_id: int, _admin: AdminActual, service: ServicioUsuarios):
+    try:
+        return service.activar(user_id)
+    except UsuarioNoEncontrado as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
 
 
-@router.post("/admin/usuarios/{user_id}/activar", response_model=UserPublic)
-def activate_user(
-    user_id: int,
-    _admin: Annotated[UserPublic, Depends(require_role(["admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    with uow:
-        return UsuarioService(uow).set_disabled(user_id, disabled=False)
-
-
-@router.post("/admin/usuarios/{user_id}/desactivar", response_model=UserPublic)
-def deactivate_user(
-    user_id: int,
-    _admin: Annotated[UserPublic, Depends(require_role(["admin"]))],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
-):
-    with uow:
-        return UsuarioService(uow).set_disabled(user_id, disabled=True)
+@router.post("/{user_id}/desactivar", response_model=UserPublic)
+def desactivar_usuario(user_id: int, admin: AdminActual, service: ServicioUsuarios):
+    try:
+        return service.desactivar(user_id, admin_id=admin.id)
+    except UsuarioNoEncontrado as e:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(e))
+    except AutoDesactivacion as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))

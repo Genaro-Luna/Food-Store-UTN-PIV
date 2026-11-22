@@ -1,18 +1,7 @@
-from typing import Optional
+from datetime import datetime
+
 from pydantic import EmailStr, field_validator
-from sqlmodel import SQLModel, Field
-
-
-class Usuario(SQLModel, table=True):
-    __tablename__ = "usuario"
-
-    id: Optional[int] = Field(default=None, primary_key=True)
-    username: str = Field(unique=True, index=True, min_length=3, max_length=50)
-    full_name: str = Field(min_length=1, max_length=100)
-    email: str = Field(unique=True, index=True, max_length=120)
-    hashed_password: str
-    role: str = Field(default="user")
-    disabled: bool = Field(default=False)
+from sqlmodel import Field, SQLModel
 
 
 class UserCreate(SQLModel):
@@ -38,14 +27,12 @@ class UserCreate(SQLModel):
 
 
 class UserPublic(SQLModel):
+    """Lo que la API expone de un usuario: nunca hashed_password."""
+
     id: int
     username: str
     full_name: str
     email: str
     role: str
     disabled: bool
-
-
-class Token(SQLModel):
-    access_token: str
-    token_type: str = "bearer"
+    created_at: datetime
