@@ -1,8 +1,8 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, status
 from app.core.deps import get_current_active_user, require_role
-from app.core.unit_of_work import UnitOfWork, get_uow
-from app.modules.usuarios.model import UserPublic
+from app.core.legacy_uow import LegacyUnitOfWork as UnitOfWork, get_uow  # temporal
+from app.modules.usuarios.schemas import UserPublic
 from app.modules.producto.schema import (
     ProductoCreate,
     ProductoRead,

@@ -29,7 +29,7 @@ class CategoriaService:
             descripcion=categoria_in.descripcion,
             activo=True,
         )
-        return self.uow.categorias.create(nueva)
+        return self.uow.categorias.add(nueva)
 
     def listar(self) -> list[Categoria]:
         return self.uow.categorias.get_activas()

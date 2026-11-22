@@ -41,7 +41,7 @@ class PedidoService:
         return PedidoReadWithDetalles.model_validate(pedido)
 
     def crear(self, data: PedidoCreate) -> PedidoReadWithDetalles:
-        pedido = self.uow.pedidos.create(Pedido(estado="PENDIENTE", total=0.0))
+        pedido = self.uow.pedidos.add(Pedido(estado="PENDIENTE", total=0.0))
         total = 0.0
 
         for item in data.detalles:
@@ -49,7 +49,7 @@ class PedidoService:
             if producto is None:
                 raise ProductoNoEncontrado(item.producto_id)
 
-            self.uow.detalles.create(
+            self.uow.detalles.add(
                 DetallePedido(
                     pedido_id=pedido.id,
                     producto_id=producto.id,

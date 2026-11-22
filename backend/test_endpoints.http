@@ -91,7 +91,7 @@ Content-Type: application/json
 DELETE {{baseUrl}}/productos/1
 
 ### 3.7 Excepción 403 Forbidden: Usuario "user" intenta listar usuarios de administración
-GET {{baseUrl}}/auth/admin/usuarios
+GET {{baseUrl}}/admin/usuarios
 
 ### 3.8 Excepción permitida (RN-05): Usuario "user" SÍ puede crear un Pedido (Responde 201 Created)
 POST {{baseUrl}}/pedidos
@@ -119,16 +119,16 @@ Content-Type: application/x-www-form-urlencoded
 username=admin&password=Admin1234!
 
 ### 4.2 Listar todos los usuarios (Exclusivo admin - Responde 200 OK)
-GET {{baseUrl}}/auth/admin/usuarios
+GET {{baseUrl}}/admin/usuarios
 
 ### 4.3 Desactivar al usuario con ID 2 ("juan") (Borrado lógico en Usuario: disabled = true)
-POST {{baseUrl}}/auth/admin/usuarios/2/desactivar
+POST {{baseUrl}}/admin/usuarios/2/desactivar
 
 ### 4.4 Reactivar al usuario con ID 2 ("juan") (disabled = false)
-POST {{baseUrl}}/auth/admin/usuarios/2/activar
+POST {{baseUrl}}/admin/usuarios/2/activar
 
 ### 4.5 Excepción 404 Not Found: Intentar desactivar un usuario inexistente (ID 99)
-POST {{baseUrl}}/auth/admin/usuarios/99/desactivar
+POST {{baseUrl}}/admin/usuarios/99/desactivar
 
 
 ### =========================================================================
@@ -182,18 +182,6 @@ Content-Type: application/json
   "nombre": "Bebidas Frías",
   "descripcion": "Categoría reactivada con descripción actualizada"
 }
-
-### 5.9 CRUD de Ingredientes: Crear ingrediente nuevo (201), actualizar (200) y buscar inexistente ID 99 (404)
-POST {{baseUrl}}/ingredientes
-Content-Type: application/json
-
-{
-  "nombre": "Cebolla Caramelizada"
-}
-
-###
-GET {{baseUrl}}/ingredientes/99
-
 
 ### =========================================================================
 ### BLOQUE 6: CRUD DE PRODUCTOS Y RELACIÓN MUCHOS A MUCHOS (N:N)

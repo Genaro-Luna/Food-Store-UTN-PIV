@@ -6,7 +6,6 @@ import { UnauthorizedPage } from '@/shared/components/UnauthorizedPage';
 import { AdminUsersPage, LoginPage, RegisterPage } from '@/features/auth';
 import { CategoriesPage } from '@/features/categories';
 import { ProductsPage } from '@/features/products';
-import { IngredientsPage } from '@/features/ingredients';
 
 export const AppRouter: React.FC = () => (
     <>
@@ -21,7 +20,6 @@ export const AppRouter: React.FC = () => (
             <Route element={<ProtectedRoute />}>
                 <Route path="/categorias" element={<CategoriesPage />} />
                 <Route path="/productos" element={<ProductsPage />} />
-                <Route path="/ingredientes" element={<IngredientsPage />} />
             </Route>
 
             {/* Ruta de administración: solo rol admin */}
@@ -32,7 +30,6 @@ export const AppRouter: React.FC = () => (
             {/* Alias en inglés (nombres de ruta del PDF del TP) */}
             <Route path="/categories" element={<Navigate to="/categorias" replace />} />
             <Route path="/products" element={<Navigate to="/productos" replace />} />
-            <Route path="/ingredients" element={<Navigate to="/ingredientes" replace />} />
 
             {/* Cualquier otra URL */}
             <Route path="*" element={<Navigate to="/categorias" replace />} />

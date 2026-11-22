@@ -38,21 +38,21 @@ export const requestLogout = async (): Promise<void> => {
 
 export const getAdminUsers = async (): Promise<UsuarioAuth[]> => {
     const res = await api.get<UsuarioAuth[]>(
-        `${AUTH_PREFIX}/admin/usuarios`
+        `/admin/usuarios`
     );
     return res.data;
 };
 
 export const activateUser = async (userId: number): Promise<UsuarioAuth> => {
     const res = await api.post<UsuarioAuth>(
-        `${AUTH_PREFIX}/admin/usuarios/${userId}/activar`
+        `/admin/usuarios/${userId}/activar`
     );
     return res.data;
 };
 
 export const deactivateUser = async (userId: number): Promise<UsuarioAuth> => {
     const res = await api.post<UsuarioAuth>(
-        `${AUTH_PREFIX}/admin/usuarios/${userId}/desactivar`
+        `/admin/usuarios/${userId}/desactivar`
     );
     return res.data;
 };

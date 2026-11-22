@@ -29,7 +29,7 @@ class ProductoService:
 
         db_producto = Producto.model_validate(producto_in)
         db_producto.activo = True
-        return self.uow.productos.create(db_producto)
+        return self.uow.productos.add(db_producto)
 
     def listar(self) -> list[Producto]:
         return self.uow.productos.get_activos()

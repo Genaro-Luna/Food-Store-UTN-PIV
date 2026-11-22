@@ -2,7 +2,7 @@ from typing import Optional
 from sqlmodel import Session, select
 from sqlalchemy import func
 from sqlalchemy.orm import selectinload
-from app.core.repository import BaseRepository
+from app.core.base_repository import BaseRepository
 from app.modules.categoria.model import Categoria
 
 
