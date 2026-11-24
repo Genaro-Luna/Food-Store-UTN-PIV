@@ -1,37 +1,26 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useAuthStore } from '../store/authStore';
+import { useMutation } from '@tanstack/react-query';
+import { useAuthStore } from '@/store/authStore';
 import { requestRegister } from '../api/auth.api';
 
-/**
- * Punto de entrada de la sesión para los componentes:
- * lectura del store, login, logout y registro.
- */
+/** Acceso de los componentes a la sesión del authStore. */
 export const useAuth = () => {
-    const queryClient = useQueryClient();
-
-    const user = useAuthStore((s) => s.user);
-    const status = useAuthStore((s) => s.status);
+    const usuario = useAuthStore((s) => s.usuario);
+    const cargando = useAuthStore((s) => s.cargando);
     const error = useAuthStore((s) => s.error);
     const login = useAuthStore((s) => s.login);
-    const logoutStore = useAuthStore((s) => s.logout);
+    const logout = useAuthStore((s) => s.logout);
     const clearError = useAuthStore((s) => s.clearError);
 
-    const registerMutation = useMutation({ mutationFn: requestRegister });
-
-    const logout = async () => {
-        await logoutStore();
-        queryClient.clear(); // no deja datos en caché de la sesión saliente
-    };
-
     return {
-        user,
-        status,
-        isAuthenticated: status === 'authenticated',
-        isAdmin: user?.role === 'admin',
+        usuario,
+        cargando,
         error,
-        clearError,
+        esAdmin: usuario?.role === 'admin',
         login,
         logout,
-        register: registerMutation.mutateAsync,
+        clearError,
     };
 };
+
+/** POST /auth/register (409 si el username o el email ya existen). */
+export const useRegistro = () => useMutation({ mutationFn: requestRegister });

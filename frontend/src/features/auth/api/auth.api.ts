@@ -1,58 +1,32 @@
-import { api } from '@/shared/api/api';
-import type { UsuarioAuth, RegisterFormValues } from '../types/auth.types';
+import { api } from '@/shared/api/axiosInstance';
+import type { Usuario } from '@/features/usuarios/types/usuario.types';
+import type { MensajeRespuesta, RegistroData } from '../types/auth.types';
 
-const AUTH_PREFIX = '/auth';
-
-export const requestLogin = async (
-    username: string,
-    password: string
-): Promise<void> => {
-    const formData = new URLSearchParams({ username, password });
-    await api.post(`${AUTH_PREFIX}/token`, formData, {
+/** POST /auth/token: el backend responde con la cookie HttpOnly; el body no trae el token. */
+export const requestLogin = async (username: string, password: string): Promise<MensajeRespuesta> => {
+    const datos = new URLSearchParams({ username, password });
+    const res = await api.post<MensajeRespuesta>('/auth/token', datos, {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     });
-};
-
-export const requestRegister = async (
-    data: RegisterFormValues
-): Promise<UsuarioAuth> => {
-    const res = await api.post<UsuarioAuth>(
-        `${AUTH_PREFIX}/register`,
-        data
-    );
     return res.data;
 };
 
-export const requestMe = async (): Promise<UsuarioAuth | null> => {
+export const requestRegister = async (data: RegistroData): Promise<Usuario> => {
+    const res = await api.post<Usuario>('/auth/register', data);
+    return res.data;
+};
+
+/** GET /auth/me: devuelve el usuario de la cookie o null si no hay sesión válida. */
+export const requestMe = async (): Promise<Usuario | null> => {
     try {
-        const res = await api.get<UsuarioAuth>(`${AUTH_PREFIX}/me`);
+        const res = await api.get<Usuario>('/auth/me');
         return res.data;
     } catch {
         return null;
     }
 };
 
-export const requestLogout = async (): Promise<void> => {
-    await api.post(`${AUTH_PREFIX}/logout`);
-};
-
-export const getAdminUsers = async (): Promise<UsuarioAuth[]> => {
-    const res = await api.get<UsuarioAuth[]>(
-        `/admin/usuarios`
-    );
-    return res.data;
-};
-
-export const activateUser = async (userId: number): Promise<UsuarioAuth> => {
-    const res = await api.post<UsuarioAuth>(
-        `/admin/usuarios/${userId}/activar`
-    );
-    return res.data;
-};
-
-export const deactivateUser = async (userId: number): Promise<UsuarioAuth> => {
-    const res = await api.post<UsuarioAuth>(
-        `/admin/usuarios/${userId}/desactivar`
-    );
+export const requestLogout = async (): Promise<MensajeRespuesta> => {
+    const res = await api.post<MensajeRespuesta>('/auth/logout');
     return res.data;
 };

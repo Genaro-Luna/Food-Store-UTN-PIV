@@ -1,218 +1,137 @@
 import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { useForm } from '@tanstack/react-form';
-import { useAuth } from '../hooks/useAuth';
+import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Campo, Input } from '@/shared/ui/Input';
+import { handleApiError } from '@/shared/api/handleApiError';
 import { useNotificationStore } from '@/store/notificationStore';
-import type { RegisterFormValues } from '../types/auth.types';
+import { useAuth, useRegistro } from '../hooks/useAuth';
+import type { RegistroData } from '../types/auth.types';
 
-const inputClass =
-    'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const bytes = (texto: string) => new TextEncoder().encode(texto).length;
+
+type Campos = keyof RegistroData;
+
+const CAMPOS: { name: Campos; etiqueta: string; type: string; autoComplete: string; placeholder: string }[] = [
+    { name: 'username', etiqueta: 'Nombre de usuario', type: 'text', autoComplete: 'username', placeholder: 'Ej: genaroluna' },
+    { name: 'full_name', etiqueta: 'Nombre completo', type: 'text', autoComplete: 'name', placeholder: 'Ej: Genaro Luna' },
+    { name: 'email', etiqueta: 'Email', type: 'email', autoComplete: 'email', placeholder: 'usuario@ejemplo.com' },
+    { name: 'password', etiqueta: 'Contraseña (mínimo 8 caracteres)', type: 'password', autoComplete: 'new-password', placeholder: '••••••••' },
+];
 
 export const RegisterPage: React.FC = () => {
-    const { user, register } = useAuth();
+    const { usuario } = useAuth();
+    const registro = useRegistro();
     const showNotification = useNotificationStore((s) => s.showNotification);
     const navigate = useNavigate();
-    const [apiError, setApiError] = useState<string | null>(null);
+    const location = useLocation();
+    const [errorApi, setErrorApi] = useState<string | null>(null);
 
     const form = useForm({
-        defaultValues: {
-            username: '',
-            full_name: '',
-            email: '',
-            password: '',
-        } as RegisterFormValues,
+        defaultValues: { username: '', full_name: '', email: '', password: '' } as RegistroData,
+        // Mismas reglas que UserCreate en el backend
         validators: {
             onSubmit: ({ value }) => {
-                const errors: Partial<Record<keyof RegisterFormValues, string>> = {};
-                if (value.username.trim().length < 3) {
-                    errors.username = 'El usuario debe tener al menos 3 caracteres';
+                const fields: Partial<Record<Campos, string>> = {};
+                const username = value.username.trim();
+                if (username.length < 3 || username.length > 50) {
+                    fields.username = 'El usuario debe tener entre 3 y 50 caracteres';
                 }
-                if (!value.full_name.trim()) {
-                    errors.full_name = 'El nombre completo es obligatorio';
+                const nombre = value.full_name.trim();
+                if (!nombre || nombre.length > 100) {
+                    fields.full_name = 'El nombre es obligatorio (máximo 100 caracteres)';
                 }
-                if (!value.email.includes('@')) {
-                    errors.email = 'Ingresa un email válido';
-                }
+                if (!EMAIL.test(value.email.trim())) fields.email = 'Ingresá un email válido';
                 if (value.password.length < 8) {
-                    errors.password = 'La contraseña debe tener al menos 8 caracteres';
+                    fields.password = 'La contraseña debe tener al menos 8 caracteres';
+                } else if (bytes(value.password) > 72) {
+                    fields.password = 'La contraseña es demasiado larga';
                 }
-                return Object.keys(errors).length > 0 ? { fields: errors } : undefined;
+                return Object.keys(fields).length > 0 ? { fields } : undefined;
             },
         },
         onSubmit: async ({ value }) => {
-            setApiError(null);
+            setErrorApi(null);
             try {
-                await register({
+                await registro.mutateAsync({
                     username: value.username.trim(),
                     full_name: value.full_name.trim(),
                     email: value.email.trim(),
                     password: value.password,
                 });
                 showNotification('Cuenta creada. Ya podés iniciar sesión.');
-                navigate('/login', { replace: true });
-            } catch (e) {
-                setApiError(
-                    e instanceof Error ? e.message : 'No se pudo completar el registro'
-                );
+                // Conserva state.from para volver, por ejemplo, al checkout
+                navigate('/login', { replace: true, state: location.state });
+            } catch (error) {
+                setErrorApi(handleApiError(error)); // 409: usuario o email ya registrado
             }
         },
     });
 
-    if (user) {
-        return <Navigate to="/categorias" replace />;
+    if (usuario) {
+        return <Navigate to="/" replace />;
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-900">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100 dark:border-gray-700">
-                <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                        Crear Cuenta
-                    </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Regístrate para acceder al sistema con rol de usuario
-                    </p>
-                </div>
-
-                {apiError && (
-                    <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
-                        {apiError}
-                    </div>
-                )}
-
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        form.handleSubmit();
-                    }}
-                    className="flex flex-col gap-4"
-                >
-                    <form.Field name="username">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Nombre de usuario *
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: genaroluna"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="full_name">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Nombre completo *
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: Genaro Luna"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="email">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Email *
-                                </label>
-                                <input
-                                    type="email"
-                                    placeholder="usuario@ejemplo.com"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="password">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Contraseña (mínimo 8 caracteres) *
-                                </label>
-                                <input
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Subscribe
-                        selector={(state) => [state.canSubmit, state.isSubmitting]}
-                    >
-                        {([canSubmit, isSubmitting]) => (
-                            <button
-                                type="submit"
-                                disabled={!canSubmit || isSubmitting}
-                                className="mt-2 w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 active:scale-95 transition shadow-sm"
-                            >
-                                {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
-                            </button>
-                        )}
-                    </form.Subscribe>
-                </form>
-
-                <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
-                    ¿Ya tienes una cuenta?{' '}
-                    <Link
-                        to="/login"
-                        className="text-blue-600 font-semibold hover:underline"
-                    >
-                        Inicia sesión
-                    </Link>
+        <Card className="mx-auto mt-6 max-w-md p-8">
+            <div className="mb-6 text-center">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Crear cuenta</h1>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Registrate para hacer pedidos
                 </p>
             </div>
-        </main>
+
+            {errorApi && (
+                <div role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+                    {errorApi}
+                </div>
+            )}
+
+            <form
+                noValidate
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    void form.handleSubmit();
+                }}
+                className="flex flex-col gap-4"
+            >
+                {CAMPOS.map((campo) => (
+                    <form.Field key={campo.name} name={campo.name}>
+                        {(field) => (
+                            <Campo etiqueta={campo.etiqueta} htmlFor={`registro-${campo.name}`} errores={field.state.meta.errors}>
+                                <Input
+                                    id={`registro-${campo.name}`}
+                                    type={campo.type}
+                                    autoComplete={campo.autoComplete}
+                                    placeholder={campo.placeholder}
+                                    value={field.state.value}
+                                    invalido={field.state.meta.errors.length > 0}
+                                    onBlur={field.handleBlur}
+                                    onChange={(e) => field.handleChange(e.target.value)}
+                                />
+                            </Campo>
+                        )}
+                    </form.Field>
+                ))}
+
+                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                    {([canSubmit, isSubmitting]) => (
+                        <Button type="submit" className="mt-2 w-full" disabled={!canSubmit} cargando={isSubmitting}>
+                            {isSubmitting ? 'Registrando...' : 'Crear cuenta'}
+                        </Button>
+                    )}
+                </form.Subscribe>
+            </form>
+
+            <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
+                ¿Ya tenés cuenta?{' '}
+                <Link to="/login" state={location.state} className="font-semibold text-orange-600 hover:underline">
+                    Iniciá sesión
+                </Link>
+            </p>
+        </Card>
     );
 };
