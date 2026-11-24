@@ -1,0 +1,488 @@
+{
+  "formato": "food-store-datos",
+  "version": 1,
+  "exportado_en": "2026-11-24T16:53:11.610817+00:00",
+  "usuarios": [
+    {
+      "full_name": "Administrador del Sistema",
+      "username": "admin",
+      "hashed_password": "$2b$12$CIpD4A0gnMco6.i1fq9mHeEbjDHzllHSrqPb8FuDkug8QqyGxwl1O",
+      "disabled": false,
+      "id": 1,
+      "email": "admin@foodstore.com",
+      "role": "admin",
+      "created_at": "2026-11-22T17:16:41.217902-03:00"
+    },
+    {
+      "full_name": "Juan Pérez",
+      "username": "juan",
+      "hashed_password": "$2b$12$dBGTi3sqrCG0jp6xqUoO0e0l9gBU/1odEbsQmR4UOQ0IoK2PZxtky",
+      "disabled": false,
+      "id": 2,
+      "email": "juan@foodstore.com",
+      "role": "user",
+      "created_at": "2026-11-22T17:16:41.409637-03:00"
+    }
+  ],
+  "categorias": [
+    {
+      "activo": true,
+      "nombre": "Hamburguesas",
+      "id": 1,
+      "descripcion": "Medallones caseros en pan de papa"
+    },
+    {
+      "activo": true,
+      "nombre": "Acompañamientos",
+      "id": 2,
+      "descripcion": "Papas fritas, aros de cebolla y entradas"
+    },
+    {
+      "activo": true,
+      "nombre": "Bebidas",
+      "id": 3,
+      "descripcion": "Gaseosas, aguas saborizadas y limonadas"
+    },
+    {
+      "activo": true,
+      "nombre": "Pizza",
+      "id": 4,
+      "descripcion": "Pizzas de todos los tamaños y gustos, con variedad de elecciones"
+    }
+  ],
+  "productos": [
+    {
+      "id": 1,
+      "descripcion": "Medallón de carne, cheddar, lechuga y tomate",
+      "imagen_url": "https://imgs.search.brave.com/UY4yrErLQE8C2q0ABrv3vuQXVKihPFHcT5p6H4qneTc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdDIu/ZGVwb3NpdHBob3Rv/cy5jb20vMTAwMDUw/NC84ODY2L2kvNDUw/L2RlcG9zaXRwaG90/b3NfODg2NjYyMTAt/c3RvY2stcGhvdG8t/ZnJlc2gtdGFzdHkt/YnVyZ2VyLmpwZw",
+      "disponible": true,
+      "categoria_id": 1,
+      "nombre": "Hamburguesa Clásica",
+      "precio_base": 8500.0,
+      "stock": 20,
+      "activo": true
+    },
+    {
+      "id": 2,
+      "descripcion": "Doble medallón, doble cheddar y panceta",
+      "imagen_url": "https://imgs.search.brave.com/bfdUDvmCwksqmVZ4Cosyv_eq5gSHKCmvg0aX-yQd-t4/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAzLzMyLzI2LzA0/LzM2MF9GXzMzMjI2/MDQ0MV81MkhoNTIx/Z29oc2xCUEp1RXdh/bFdGbUxDQ1N0a3Q2/Zi5qcGc",
+      "disponible": true,
+      "categoria_id": 1,
+      "nombre": "Hamburguesa Doble Cheddar",
+      "precio_base": 11200.0,
+      "stock": 13,
+      "activo": true
+    },
+    {
+      "id": 3,
+      "descripcion": "Medallón de garbanzos con vegetales grillados",
+      "imagen_url": "https://imgs.search.brave.com/cTdRp1bO_fQrPDUVX_rRVtJaho-7MhXJAXHREMIdtF0/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWcu/bWFnbmlmaWMuY29t/L2ZvdG9zLXByZW1p/dW0vZGVsaWNpb3Nh/LWhhbWJ1cmd1ZXNh/LXZlZ2V0YWwtYWd1/YWNhdGUtY29sZXMt/c29icmUtZm9uZG8t/YmxhbmNvXzk5NDc2/NC0yMjc3NzYuanBn/P3NlbXQ9YWlzX2h5/YnJpZCZ3PTc0MCZx/PTgw",
+      "disponible": true,
+      "categoria_id": 1,
+      "nombre": "Hamburguesa Veggie",
+      "precio_base": 9800.0,
+      "stock": 8,
+      "activo": true
+    },
+    {
+      "id": 4,
+      "descripcion": "Porción mediana, crocantes",
+      "imagen_url": "https://imgs.search.brave.com/2Wpu8DfvNXrxLqwFjaOLV19bxbeXsP9dQ_TbX01zggc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA0LzYxLzU3LzQ5/LzM2MF9GXzQ2MTU3/NDk1MF9MUDM4OGZC/TFVQbVhuMnVZOUJ2/ZlFhV0RkRTB1bUhP/Sy5qcGc",
+      "disponible": true,
+      "categoria_id": 2,
+      "nombre": "Papas Fritas",
+      "precio_base": 3500.0,
+      "stock": 30,
+      "activo": true
+    },
+    {
+      "id": 5,
+      "descripcion": "Rebozados en cerveza, con salsa barbacoa",
+      "imagen_url": "https://imgs.search.brave.com/98Li0MJ0WgFZbE7rMjduX2uTyal1GAklXuHgkjVh-aQ/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5pc3RvY2twaG90/by5jb20vaWQvMjE4/ODcwNzY5MS9lcy9m/b3RvL2hvbWVtYWRl/LW9uaW9uLXJpbmdz/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1ZSkJfWGE2enVS/NU05eEFRaTRfaW9i/U2d0Z29aeUg3S1Zp/aHNoMUlDbEtZPQ",
+      "disponible": true,
+      "categoria_id": 2,
+      "nombre": "Aros de Cebolla",
+      "precio_base": 4200.0,
+      "stock": 25,
+      "activo": true
+    },
+    {
+      "id": 6,
+      "descripcion": "Seis unidades con salsa a elección",
+      "imagen_url": "https://imgs.search.brave.com/0FLl4jKFkjk4v3YEPMwEdnDd30gQYkWRPTSpqNjb884/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzAxLzU4LzM2LzEz/LzM2MF9GXzE1ODM2/MTM1Nl9Qc2dxTHZz/aXJrcE01bjlocUNu/NDhyZXh1QjJVV3N1/bC5qcGc",
+      "disponible": true,
+      "categoria_id": 2,
+      "nombre": "Nuggets de Pollo",
+      "precio_base": 5200.0,
+      "stock": 18,
+      "activo": true
+    },
+    {
+      "id": 7,
+      "descripcion": "Gaseosa sabor cola",
+      "imagen_url": "https://imgs.search.brave.com/x_o2eT46lTX3ChSxRxcjSS3Q0GSH99jeapwDU85RI5U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9odHRw/Mi5tbHN0YXRpYy5j/b20vRF9RX05QXzJY/Xzg4NjcwOC1NTEE5/NjY1MDAzMzE4OV8x/MDIwMjUtVi53ZWJw",
+      "disponible": true,
+      "categoria_id": 3,
+      "nombre": "Coca-Cola 500 ml",
+      "precio_base": 2200.0,
+      "stock": 40,
+      "activo": true
+    },
+    {
+      "id": 8,
+      "descripcion": "Con menta y jengibre, 1,5 litros",
+      "imagen_url": "https://imgs.search.brave.com/jakFvsCI6vp24VSV-ILwu0F2ULF2UQ0XjPAqp2tH_rk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMuYmFpbmV0LmVz/L2NsaXAvYmJkZGM4/MWMtYmVjYy00NzZl/LWFiNmItYjBmMmRl/NDkzODhlX3NvdXJj/ZS1hc3BlY3QtcmF0/aW9fMTYwMHdfMC5q/cGc",
+      "disponible": true,
+      "categoria_id": 3,
+      "nombre": "Limonada Casera 1,5L",
+      "precio_base": 2500.0,
+      "stock": 10,
+      "activo": true
+    },
+    {
+      "id": 9,
+      "descripcion": "prueba 1",
+      "imagen_url": null,
+      "disponible": true,
+      "categoria_id": 2,
+      "nombre": "Probando producto nuevo",
+      "precio_base": 100000.0,
+      "stock": 12141251,
+      "activo": false
+    },
+    {
+      "id": 10,
+      "descripcion": "Porción mediana de Papas fritas crocantes con beicon, cheddar y cebolla de verdeo",
+      "imagen_url": "https://imgs.search.brave.com/gtJyh0jXmZa880QwmQMMXWDhMTt494Mm5SQNCQKRpGk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9sb2Nv/c3hsYXBhcnJpbGxh/LmNvbS93cC1jb250/ZW50L3VwbG9hZHMv/MjAxNS8wMi9SZWNl/dGEtcmVjZXRhcy1s/b2Nvcy14LWxhLXBh/cnJpbGxhLWxvY29z/eGxhcGFycmlsbGEt/cmVjZXRhLXBhcGFz/LWZyaXRhcy1jaGVk/ZGFyLXZlcmRlby1w/YW5jZXRhLXBhcGFz/LWZyaXRhcy1jaGVk/ZGFyLXZlcmRlLTY0/MHg0NzcuanBn",
+      "disponible": true,
+      "categoria_id": 2,
+      "nombre": "Papas Fritas Prime",
+      "precio_base": 8500.0,
+      "stock": 15,
+      "activo": true
+    },
+    {
+      "id": 11,
+      "descripcion": "Agua mineral Alta Montaña 500ml",
+      "imagen_url": "https://imgs.search.brave.com/oehknD8d-bERQ382BErRDMVxfx3M1aCgZY5SW7naCYc/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMuY290b2RpZ2l0/YWwzLmNvbS5hci9z/aXRpb3MvZm90b3Mv/bGFyZ2UvMDAwNTk5/MDAvMDAwNTk5Nzcu/anBn",
+      "disponible": true,
+      "categoria_id": 3,
+      "nombre": "Agua Mineral 500ml",
+      "precio_base": 1500.0,
+      "stock": 20,
+      "activo": true
+    },
+    {
+      "id": 12,
+      "descripcion": "Pizza con salsa y queso mozzarella",
+      "imagen_url": "https://imgs.search.brave.com/KUyjPRgBD4yv1skx9NHxwF-c1BrsGzPZeGDnA82baTw/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9pbWFn/LmJvbnZpdmV1ci5j/b20vcGl6emEtZGUt/cXVlc28tZGUtY2Fi/cmEteS1iYWNvbl80/MDAuanBn",
+      "disponible": true,
+      "categoria_id": 4,
+      "nombre": "Pizza Común",
+      "precio_base": 10000.0,
+      "stock": 12,
+      "activo": true
+    },
+    {
+      "id": 13,
+      "descripcion": "Pizza con salsa, queso mozzarella y abundante cebolla crocante",
+      "imagen_url": "https://imgs.search.brave.com/0hUhNcw06JN6JS8W6JO8pT4c_H35YMHNyJp82j6t9fs/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5kaWFyaW91bm8u/Y29tLmFyL3AvNGFi/YmExODMxOTA2ODVk/MjM2MzMwNzgzNGJi/NWU5NzQvYWRqdW50/b3MvMjk4L2ltYWdl/bmVzLzAwOS81Mjkv/MDAwOTUyOTMwOS8x/MjAweDAvc21hcnQv/ZnVnYWpwZy5qcGc",
+      "disponible": true,
+      "categoria_id": 4,
+      "nombre": "Pizza Fugazzeta",
+      "precio_base": 13500.0,
+      "stock": 8,
+      "activo": true
+    }
+  ],
+  "pedidos": [
+    {
+      "id": 1,
+      "usuario_id": 2,
+      "forma_pago": "EFECTIVO",
+      "notas": "Sin cebolla",
+      "created_at": "2026-11-22T17:18:16.613827-03:00",
+      "estado": "CANCELADO",
+      "direccion_entrega": "Av. San Martín 1234, Mendoza",
+      "total": 20500.0,
+      "updated_at": "2026-11-22T17:18:51.910431-03:00",
+      "items": [
+        {
+          "id": 1,
+          "cantidad": 2,
+          "precio_unitario": 8500.0,
+          "producto_id": 1,
+          "nombre_producto": "Hamburguesa Clásica",
+          "subtotal": 17000.0
+        },
+        {
+          "id": 2,
+          "cantidad": 1,
+          "precio_unitario": 3500.0,
+          "producto_id": 4,
+          "nombre_producto": "Papas Fritas",
+          "subtotal": 3500.0
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "usuario_id": 2,
+      "forma_pago": "TRANSFERENCIA",
+      "notas": null,
+      "created_at": "2026-11-22T17:19:04.478724-03:00",
+      "estado": "ENTREGADO",
+      "direccion_entrega": "Belgrano 450, Godoy Cruz",
+      "total": 11200.0,
+      "updated_at": "2026-11-22T17:20:26.617045-03:00",
+      "items": [
+        {
+          "id": 4,
+          "cantidad": 1,
+          "precio_unitario": 11200.0,
+          "producto_id": 2,
+          "nombre_producto": "Hamburguesa Doble Cheddar",
+          "subtotal": 11200.0
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "usuario_id": 2,
+      "forma_pago": "EFECTIVO",
+      "notas": null,
+      "created_at": "2026-11-22T17:19:09.408874-03:00",
+      "estado": "CANCELADO",
+      "direccion_entrega": "Belgrano 450, Godoy Cruz",
+      "total": 8400.0,
+      "updated_at": "2026-11-22T17:21:31.490959-03:00",
+      "items": [
+        {
+          "id": 5,
+          "cantidad": 2,
+          "precio_unitario": 4200.0,
+          "producto_id": 5,
+          "nombre_producto": "Aros de Cebolla",
+          "subtotal": 8400.0
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "usuario_id": 1,
+      "forma_pago": "TRANSFERENCIA",
+      "notas": null,
+      "created_at": "2026-11-22T17:22:37.222288-03:00",
+      "estado": "ENTREGADO",
+      "direccion_entrega": "Belgrano 450, Godoy Cruz",
+      "total": 11200.0,
+      "updated_at": "2026-11-24T09:17:24.298015-03:00",
+      "items": [
+        {
+          "id": 6,
+          "cantidad": 1,
+          "precio_unitario": 11200.0,
+          "producto_id": 2,
+          "nombre_producto": "Hamburguesa Doble Cheddar",
+          "subtotal": 11200.0
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "usuario_id": 1,
+      "forma_pago": "EFECTIVO",
+      "notas": null,
+      "created_at": "2026-11-22T17:22:40.588486-03:00",
+      "estado": "ENTREGADO",
+      "direccion_entrega": "Belgrano 450, Godoy Cruz",
+      "total": 19600.0,
+      "updated_at": "2026-11-24T09:17:23.886605-03:00",
+      "items": [
+        {
+          "id": 7,
+          "cantidad": 2,
+          "precio_unitario": 9800.0,
+          "producto_id": 3,
+          "nombre_producto": "Hamburguesa Veggie",
+          "subtotal": 19600.0
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "usuario_id": 2,
+      "forma_pago": "TRANSFERENCIA",
+      "notas": "lsdkfghbwseyukr",
+      "created_at": "2026-11-23T22:48:56.333339-03:00",
+      "estado": "CANCELADO",
+      "direccion_entrega": "Ovidio Lago",
+      "total": 39400.0,
+      "updated_at": "2026-11-23T22:49:11.053309-03:00",
+      "items": [
+        {
+          "id": 8,
+          "cantidad": 2,
+          "precio_unitario": 8500.0,
+          "producto_id": 1,
+          "nombre_producto": "Hamburguesa Clásica",
+          "subtotal": 17000.0
+        },
+        {
+          "id": 9,
+          "cantidad": 2,
+          "precio_unitario": 11200.0,
+          "producto_id": 2,
+          "nombre_producto": "Hamburguesa Doble Cheddar",
+          "subtotal": 22400.0
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "usuario_id": 1,
+      "forma_pago": "EFECTIVO",
+      "notas": null,
+      "created_at": "2026-11-24T09:34:26.735281-03:00",
+      "estado": "CANCELADO",
+      "direccion_entrega": "Av. Almafuerte",
+      "total": 196700.0,
+      "updated_at": "2026-11-24T09:34:40.287877-03:00",
+      "items": [
+        {
+          "id": 10,
+          "cantidad": 2,
+          "precio_unitario": 4200.0,
+          "producto_id": 5,
+          "nombre_producto": "Aros de Cebolla",
+          "subtotal": 8400.0
+        },
+        {
+          "id": 11,
+          "cantidad": 3,
+          "precio_unitario": 3500.0,
+          "producto_id": 4,
+          "nombre_producto": "Papas Fritas",
+          "subtotal": 10500.0
+        },
+        {
+          "id": 12,
+          "cantidad": 3,
+          "precio_unitario": 5200.0,
+          "producto_id": 6,
+          "nombre_producto": "Nuggets de Pollo",
+          "subtotal": 15600.0
+        },
+        {
+          "id": 13,
+          "cantidad": 2,
+          "precio_unitario": 9800.0,
+          "producto_id": 3,
+          "nombre_producto": "Hamburguesa Veggie",
+          "subtotal": 19600.0
+        },
+        {
+          "id": 14,
+          "cantidad": 2,
+          "precio_unitario": 11200.0,
+          "producto_id": 2,
+          "nombre_producto": "Hamburguesa Doble Cheddar",
+          "subtotal": 22400.0
+        },
+        {
+          "id": 15,
+          "cantidad": 1,
+          "precio_unitario": 8500.0,
+          "producto_id": 1,
+          "nombre_producto": "Hamburguesa Clásica",
+          "subtotal": 8500.0
+        },
+        {
+          "id": 16,
+          "cantidad": 11,
+          "precio_unitario": 2200.0,
+          "producto_id": 7,
+          "nombre_producto": "Coca-Cola 500 ml",
+          "subtotal": 24200.0
+        },
+        {
+          "id": 17,
+          "cantidad": 9,
+          "precio_unitario": 1500.0,
+          "producto_id": 11,
+          "nombre_producto": "Agua Mineral 500ml",
+          "subtotal": 13500.0
+        },
+        {
+          "id": 18,
+          "cantidad": 2,
+          "precio_unitario": 10000.0,
+          "producto_id": 12,
+          "nombre_producto": "Pizza Común",
+          "subtotal": 20000.0
+        },
+        {
+          "id": 19,
+          "cantidad": 4,
+          "precio_unitario": 2500.0,
+          "producto_id": 8,
+          "nombre_producto": "Limonada Casera 1,5L",
+          "subtotal": 10000.0
+        },
+        {
+          "id": 20,
+          "cantidad": 2,
+          "precio_unitario": 8500.0,
+          "producto_id": 10,
+          "nombre_producto": "Papas Fritas Prime",
+          "subtotal": 17000.0
+        },
+        {
+          "id": 21,
+          "cantidad": 2,
+          "precio_unitario": 13500.0,
+          "producto_id": 13,
+          "nombre_producto": "Pizza Fugazzeta",
+          "subtotal": 27000.0
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "usuario_id": 2,
+      "forma_pago": "EFECTIVO",
+      "notas": null,
+      "created_at": "2026-11-24T09:35:21.759582-03:00",
+      "estado": "CANCELADO",
+      "direccion_entrega": "Ovidio Lago",
+      "total": 23900.0,
+      "updated_at": "2026-11-24T09:35:54.977444-03:00",
+      "items": [
+        {
+          "id": 22,
+          "cantidad": 1,
+          "precio_unitario": 8500.0,
+          "producto_id": 1,
+          "nombre_producto": "Hamburguesa Clásica",
+          "subtotal": 8500.0
+        },
+        {
+          "id": 23,
+          "cantidad": 1,
+          "precio_unitario": 11200.0,
+          "producto_id": 2,
+          "nombre_producto": "Hamburguesa Doble Cheddar",
+          "subtotal": 11200.0
+        },
+        {
+          "id": 24,
+          "cantidad": 1,
+          "precio_unitario": 4200.0,
+          "producto_id": 5,
+          "nombre_producto": "Aros de Cebolla",
+          "subtotal": 4200.0
+        }
+      ]
+    }
+  ]
+}
