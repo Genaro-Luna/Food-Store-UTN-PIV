@@ -4,7 +4,7 @@ Tienda de comidas con catálogo público, carrito, pedidos con control de stock 
 Trabajo Práctico Integrador de **Programación IV** — Tecnicatura Universitaria en Programación (UTN).
 
 - **Repositorio:** https://github.com/Genaro-Luna/Food-Store-UTN-PIV
-- **Video de demostración:** _(pegar acá el link público del video)_
+- **Video de demostración:** https://drive.google.com/file/d/1rIqXvojWiVC74ZWb21Z4i7z6oC4PpBYr/view?usp=sharing
 - **Autor:** Genaro Luna
 
 | Parte | Tecnologías |
