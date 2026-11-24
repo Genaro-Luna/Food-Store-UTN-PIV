@@ -4,6 +4,7 @@ import { requestLogin, requestLogout, requestMe } from '@/features/auth/api/auth
 import { handleApiError } from '@/shared/api/handleApiError';
 import { queryClient } from '@/shared/api/queryClient';
 import type { Usuario } from '@/features/usuarios/types/usuario.types';
+import { useCartStore } from './cartStore';
 
 interface AuthState {
     usuario: Usuario | null;
@@ -53,6 +54,8 @@ export const useAuthStore = create<AuthState>()(
                 } catch {
                     // Aunque falle la llamada, la sesión local se cierra igual.
                 }
+                // Al cerrar sesión a propósito se vacía el carrito (si la sesión vence, se conserva).
+                useCartStore.getState().vaciar();
                 get().clearSession();
             },
 
