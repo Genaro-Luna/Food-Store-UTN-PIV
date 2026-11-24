@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
-import { useAuthStore } from '@/features/auth';
 import { AppRouter } from '@/routes/AppRouter';
 import { Toast } from '@/shared/components/Toast';
+import { useAuthStore } from '@/store/authStore';
 
 export default function App() {
-    const checkAuth = useAuthStore((s) => s.checkAuth);
+    const checkSession = useAuthStore((s) => s.checkSession);
 
-    // Única lógica permitida (RA-04): verificar la sesión al iniciar
+    // Única llamada en useEffect: confirmar la sesión (GET /auth/me) al montar la aplicación.
     useEffect(() => {
-        checkAuth();
-    }, [checkAuth]);
+        void checkSession();
+    }, [checkSession]);
 
     return (
         <>

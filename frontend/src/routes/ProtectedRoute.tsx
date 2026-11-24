@@ -1,39 +1,31 @@
 import React from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuthStore, type Role } from '@/features/auth';
-import { LoadingState } from '@/shared/components/UiStates';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store/authStore';
+import { Cargando } from '@/shared/components/Cargando';
+import type { Rol } from '@/features/usuarios/types/usuario.types';
 
 interface ProtectedRouteProps {
-    allowedRoles?: Role[]; // sin roles = alcanza con estar autenticado
+    /** Roles permitidos; sin roles alcanza con tener sesión. */
+    roles?: Rol[];
 }
 
 /**
- * Guardia de rutas. Se usa como elemento de una ruta "padre" sin path:
- * las rutas hijas se renderizan en <Outlet /> solo si pasan los controles.
+ * Sin sesión redirige a /login (recordando la ruta pedida) y sin el rol a /unauthorized.
+ * Es solo UX: la protección real la hacen get_current_active_user y require_role en el backend.
  */
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ allowedRoles }) => {
-    const user = useAuthStore((s) => s.user);
-    const status = useAuthStore((s) => s.status);
+export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ roles }) => {
+    const usuario = useAuthStore((s) => s.usuario);
+    const cargando = useAuthStore((s) => s.cargando);
+    const location = useLocation();
 
-    // 1. Esperando GET /auth/me: no se redirige todavía
-    if (status === 'checking') {
-        return (
-            <div className="max-w-5xl mx-auto p-6 mt-10">
-                <LoadingState message="Restaurando sesión..." />
-            </div>
-        );
+    if (cargando) {
+        return <Cargando mensaje="Verificando sesión..." />;
     }
-
-    // 2. Sin sesión → login
-    if (!user) {
-        return <Navigate to="/login" replace />;
+    if (!usuario) {
+        return <Navigate to="/login" replace state={{ from: `${location.pathname}${location.search}` }} />;
     }
-
-    // 3. Con sesión pero sin el rol requerido → acceso denegado
-    if (allowedRoles && !allowedRoles.includes(user.role)) {
+    if (roles && !roles.includes(usuario.role)) {
         return <Navigate to="/unauthorized" replace />;
     }
-
-    // 4. Sesión válida y rol permitido → la página hija
     return <Outlet />;
 };
