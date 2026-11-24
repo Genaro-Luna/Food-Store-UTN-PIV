@@ -2,8 +2,8 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from app.core.security import decode_access_token
-from app.core.unit_of_work import UnitOfWork, get_uow
-from app.modules.usuarios.model import UserPublic
+from app.modules.usuarios.schemas import UserPublic
+from app.modules.usuarios.unit_of_work import UsuarioUnitOfWork
 
 
 class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
@@ -23,9 +23,13 @@ class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
 oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="/api/v1/auth/token")
 
 
+def get_usuario_uow() -> UsuarioUnitOfWork:
+    return UsuarioUnitOfWork()
+
+
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    uow: Annotated[UnitOfWork, Depends(get_uow)],
+    uow: Annotated[UsuarioUnitOfWork, Depends(get_usuario_uow)],
 ) -> UserPublic:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,

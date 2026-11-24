@@ -1,22 +1,22 @@
 from datetime import datetime, timedelta, timezone
-import bcrypt
+
 from jose import JWTError, jwt
+from passlib.context import CryptContext
+
 from app.core.config import settings
+
+# Passlib con bcrypt (costo 12 por defecto). bcrypt queda fijado en 4.0.1
+# porque Passlib 1.7.4 falla con bcrypt 5.
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def hash_password(plain: str) -> str:
-    password_bytes = plain.encode("utf-8")
-    salt = bcrypt.gensalt(rounds=12)
-    hashed_bytes = bcrypt.hashpw(password_bytes, salt)
-    return hashed_bytes.decode("utf-8")
+    return pwd_context.hash(plain)
 
 
 def verify_password(plain: str, hashed: str) -> bool:
     try:
-        return bcrypt.checkpw(
-            plain.encode("utf-8"),
-            hashed.encode("utf-8"),
-        )
+        return pwd_context.verify(plain, hashed)
     except ValueError:
         return False
 
@@ -32,9 +32,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 
 def decode_access_token(token: str) -> dict | None:
     try:
-        payload = jwt.decode(
-            token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
-        )
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
         if payload.get("type") != "access":
             return None
         return payload

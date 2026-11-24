@@ -1,53 +1,67 @@
 from datetime import datetime
-from typing import Literal
-from pydantic import BaseModel, Field, ConfigDict, field_validator
+from typing import Literal, Optional
 
-EstadoPedidoLiteral = Literal["PENDIENTE", "CONFIRMADO", "ENTREGADO", "CANCELADO"]
+from pydantic import field_validator
+from sqlmodel import Field, SQLModel
+
+EstadoPedido = Literal["PENDIENTE", "EN_PREPARACION", "ENTREGADO", "CANCELADO"]
+FormaPago = Literal["EFECTIVO", "TRANSFERENCIA"]
 
 
-class DetallePedidoCreate(BaseModel):
+class ItemPedidoCreate(SQLModel):
     producto_id: int
     cantidad: int = Field(ge=1)
 
 
-class PedidoCreate(BaseModel):
-    detalles: list[DetallePedidoCreate] = Field(min_length=1)
+class PedidoCreate(SQLModel):
+    items: list[ItemPedidoCreate] = Field(min_length=1)
+    forma_pago: FormaPago
+    direccion_entrega: str = Field(min_length=5, max_length=200)
+    notas: Optional[str] = Field(default=None, max_length=500)
 
-    @field_validator("detalles")
+    @field_validator("direccion_entrega")
     @classmethod
-    def validar_productos_no_repetidos(
-        cls, detalles: list[DetallePedidoCreate]
-    ) -> list[DetallePedidoCreate]:
-        ids = [item.producto_id for item in detalles]
-        if len(ids) != len(set(ids)):
-            raise ValueError(
-                "No se puede repetir el mismo producto_id en dos detalles del mismo pedido"
-            )
-        return detalles
+    def validar_direccion(cls, v: str) -> str:
+        limpia = v.strip()
+        if len(limpia) < 5:
+            raise ValueError("La dirección debe tener entre 5 y 200 caracteres")
+        return limpia
 
 
-class PedidoUpdate(BaseModel):
-    estado: EstadoPedidoLiteral
-
-
-class DetallePedidoRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    pedido_id: int
+class DetallePedidoRead(SQLModel):
     producto_id: int
-    cantidad: int
+    nombre_producto: str
     precio_unitario: float
+    cantidad: int
+    subtotal: float
 
 
-class PedidoRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
+class PedidoRead(SQLModel):
     id: int
-    fecha: datetime
-    estado: str
+    usuario_id: int
+    estado: EstadoPedido
+    forma_pago: FormaPago
+    direccion_entrega: str
+    notas: Optional[str]
     total: float
-    detalles: list[DetallePedidoRead] = []
+    created_at: datetime
+    updated_at: datetime
+    items: list[DetallePedidoRead]
 
 
-class PedidoReadWithDetalles(PedidoRead):
-    detalles: list[DetallePedidoRead] = []
+class PedidosPaginados(SQLModel):
+    total: int
+    items: list[PedidoRead]
+
+
+class CambioEstado(SQLModel):
+    estado: EstadoPedido
+
+
+class ResumenPedidos(SQLModel):
+    pendientes: int
+    en_preparacion: int
+    entregados: int
+    cancelados: int
+    pedidos_hoy: int
+    ingresos_entregados: float

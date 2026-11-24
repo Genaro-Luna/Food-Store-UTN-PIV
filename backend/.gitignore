@@ -9,3 +9,5 @@ venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
+# Base SQLite de desarrollo
+*.db

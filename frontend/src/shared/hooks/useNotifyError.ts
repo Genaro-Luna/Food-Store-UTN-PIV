@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNotificationStore } from '@/store/notificationStore';
-import { isForbiddenError } from '@/shared/api/api';
+import { isForbiddenError } from '@/shared/api/handleApiError';
 
 /**
  * Devuelve un callback para el onError de las mutaciones: muestra el error

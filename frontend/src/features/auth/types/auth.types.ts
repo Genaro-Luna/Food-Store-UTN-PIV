@@ -1,24 +1,18 @@
-export type Role = 'user' | 'admin';
-
-export interface UsuarioAuth {
-    id: number;
-    username: string;
-    full_name: string;
-    email: string;
-    role: Role;
-    disabled: boolean;
-}
-
+/** Campos del formulario de login (OAuth2PasswordRequestForm en el backend). */
 export interface LoginCredentials {
     username: string;
     password: string;
 }
 
-export interface RegisterFormValues {
+/** Espeja UserCreate del backend. */
+export interface RegistroData {
     username: string;
     full_name: string;
     email: string;
     password: string;
 }
-/** Estado de la verificación de sesión: 'checking' mientras se espera GET /auth/me. */
-export type AuthStatus = 'checking' | 'authenticated' | 'unauthenticated';
+
+/** Respuesta de /auth/token y /auth/logout. */
+export interface MensajeRespuesta {
+    message: string;
+}

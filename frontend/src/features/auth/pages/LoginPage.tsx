@@ -1,152 +1,118 @@
 import React, { useEffect } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 import { useForm } from '@tanstack/react-form';
+import { Button } from '@/shared/ui/Button';
+import { Card } from '@/shared/ui/Card';
+import { Campo, Input } from '@/shared/ui/Input';
 import { useAuth } from '../hooks/useAuth';
 import type { LoginCredentials } from '../types/auth.types';
 
-const inputClass =
-    'w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 dark:text-gray-100 px-3 py-2 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200';
+/** ProtectedRoute guarda en state.from la ruta a la que se quería entrar. */
+interface EstadoNavegacion {
+    from?: string;
+}
 
 export const LoginPage: React.FC = () => {
-    const { user, login, error, clearError } = useAuth();
-    const navigate = useNavigate();
+    const { usuario, login, error, clearError } = useAuth();
+    const location = useLocation();
+    const destino = (location.state as EstadoNavegacion | null)?.from ?? '/';
 
     useEffect(() => {
         clearError();
     }, [clearError]);
 
     const form = useForm({
-        defaultValues: {
-            username: '',
-            password: '',
-        } as LoginCredentials,
+        defaultValues: { username: '', password: '' } as LoginCredentials,
         validators: {
             onSubmit: ({ value }) => {
-                const errors: Partial<Record<keyof LoginCredentials, string>> = {};
-                if (!value.username.trim()) {
-                    errors.username = 'Ingresa tu nombre de usuario';
-                }
-                if (!value.password) {
-                    errors.password = 'Ingresa tu contraseña';
-                }
-                return Object.keys(errors).length > 0 ? { fields: errors } : undefined;
+                const fields: Partial<Record<keyof LoginCredentials, string>> = {};
+                if (!value.username.trim()) fields.username = 'Ingresá tu nombre de usuario';
+                if (!value.password) fields.password = 'Ingresá tu contraseña';
+                return Object.keys(fields).length > 0 ? { fields } : undefined;
             },
         },
+        // Si el login funciona, el usuario queda en el store y el <Navigate> de abajo redirige.
         onSubmit: async ({ value }) => {
-            try {
-                await login(value.username.trim(), value.password);
-                navigate('/categorias', { replace: true });
-            } catch {
-                // El error ya queda guardado en el store de auth y se muestra en pantalla
-            }
+            await login(value.username.trim(), value.password);
         },
     });
 
-    if (user) {
-        return <Navigate to="/categorias" replace />;
+    if (usuario) {
+        return <Navigate to={destino} replace />;
     }
 
     return (
-        <main className="min-h-screen flex items-center justify-center p-4 bg-gray-200 dark:bg-gray-900">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-full max-w-md p-8 border border-gray-100 dark:border-gray-700">
-                <div className="text-center mb-6">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-                        Iniciar Sesión
-                    </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        Ingresa tus credenciales para acceder al sistema
-                    </p>
-                </div>
-
-                {error && (
-                    <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
-                        {error}
-                    </div>
-                )}
-
-                <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        form.handleSubmit();
-                    }}
-                    className="flex flex-col gap-4"
-                >
-                    <form.Field name="username">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Usuario *
-                                </label>
-                                <input
-                                    type="text"
-                                    placeholder="Ej: admin o juan"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Field name="password">
-                        {(f) => (
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                                    Contraseña *
-                                </label>
-                                <input
-                                    type="password"
-                                    placeholder="••••••••"
-                                    className={inputClass}
-                                    value={f.state.value}
-                                    onChange={(e) => f.handleChange(e.target.value)}
-                                />
-                                {f.state.meta.errors.map((err) => (
-                                    <p
-                                        key={String(err)}
-                                        className="mt-1 text-xs text-red-500"
-                                    >
-                                        {String(err)}
-                                    </p>
-                                ))}
-                            </div>
-                        )}
-                    </form.Field>
-
-                    <form.Subscribe
-                        selector={(state) => [state.canSubmit, state.isSubmitting]}
-                    >
-                        {([canSubmit, isSubmitting]) => (
-                            <button
-                                type="submit"
-                                disabled={!canSubmit || isSubmitting}
-                                className="mt-2 w-full py-2.5 bg-blue-600 text-white rounded-lg text-sm font-semibold hover:bg-blue-700 disabled:opacity-50 active:scale-95 transition shadow-sm"
-                            >
-                                {isSubmitting ? 'Iniciando sesión...' : 'Ingresar'}
-                            </button>
-                        )}
-                    </form.Subscribe>
-                </form>
-
-                <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
-                    ¿No tienes una cuenta?{' '}
-                    <Link
-                        to="/register"
-                        className="text-blue-600 font-semibold hover:underline"
-                    >
-                        Regístrate aquí
-                    </Link>
+        <Card className="mx-auto mt-6 max-w-md p-8">
+            <div className="mb-6 text-center">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Iniciar sesión</h1>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Ingresá para confirmar tus pedidos
                 </p>
             </div>
-        </main>
+
+            {error && (
+                <div role="alert" className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-200">
+                    {error}
+                </div>
+            )}
+
+            <form
+                noValidate
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    void form.handleSubmit();
+                }}
+                className="flex flex-col gap-4"
+            >
+                <form.Field name="username">
+                    {(field) => (
+                        <Campo etiqueta="Usuario" htmlFor="login-username" errores={field.state.meta.errors}>
+                            <Input
+                                id="login-username"
+                                autoComplete="username"
+                                placeholder="Ej: juan"
+                                value={field.state.value}
+                                invalido={field.state.meta.errors.length > 0}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                            />
+                        </Campo>
+                    )}
+                </form.Field>
+
+                <form.Field name="password">
+                    {(field) => (
+                        <Campo etiqueta="Contraseña" htmlFor="login-password" errores={field.state.meta.errors}>
+                            <Input
+                                id="login-password"
+                                type="password"
+                                autoComplete="current-password"
+                                placeholder="••••••••"
+                                value={field.state.value}
+                                invalido={field.state.meta.errors.length > 0}
+                                onBlur={field.handleBlur}
+                                onChange={(e) => field.handleChange(e.target.value)}
+                            />
+                        </Campo>
+                    )}
+                </form.Field>
+
+                <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+                    {([canSubmit, isSubmitting]) => (
+                        <Button type="submit" className="mt-2 w-full" disabled={!canSubmit} cargando={isSubmitting}>
+                            {isSubmitting ? 'Ingresando...' : 'Ingresar'}
+                        </Button>
+                    )}
+                </form.Subscribe>
+            </form>
+
+            <p className="mt-6 text-center text-xs text-gray-600 dark:text-gray-400">
+                ¿No tenés cuenta?{' '}
+                <Link to="/register" state={location.state} className="font-semibold text-orange-600 hover:underline">
+                    Registrate
+                </Link>
+            </p>
+        </Card>
     );
 };
