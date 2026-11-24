@@ -3,12 +3,6 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    """Configuración leída del archivo .env.
-
-    DATABASE_URL y SECRET_KEY no tienen valor por defecto: si faltan,
-    la aplicación no arranca (fail-fast).
-    """
-
     DATABASE_URL: str
     SECRET_KEY: str = Field(min_length=32)
     ALGORITHM: str = "HS256"
