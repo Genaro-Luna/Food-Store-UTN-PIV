@@ -96,6 +96,32 @@ También se puede registrar un cliente nuevo desde `/register`.
 
 ---
 
+## Datos de demostración (JSON)
+
+`backend/datos/foodstore_datos.json` es una copia completa de una base de prueba: usuarios, categorías, productos y pedidos en los cuatro estados. Sirve para ver el panel de administración, el resumen y «Mis pedidos» con datos, sin cargarlos a mano.
+
+Se carga **en lugar del seed**. Con la base creada (paso 2) y el entorno virtual activo, desde `backend/`:
+
+```bash
+python -m app.db.datos_json importar
+uvicorn app.main:app --reload
+```
+
+- Si la base ya tiene datos (por ejemplo, porque se ejecutó el seed), el comando avisa y no modifica nada. Para borrarlos y cargar el archivo: `python -m app.db.datos_json importar --reemplazar`.
+- La carga es una sola transacción: si algo falla, la base queda como estaba.
+- Se conservan ids, fechas, estados de los pedidos y contraseñas (guardadas como hash).
+- La tarjeta «Pedidos de hoy» del resumen muestra 0: cuenta solo los pedidos creados en el día.
+
+| Rol | Usuario | Contraseña |
+| --- | --- | --- |
+| Administrador | `admin` | `Admin1234!` |
+| Cliente | `juan` | `Juan1234!` |
+| Cliente | `maria` | `Maria1234!` |
+
+Para generar el archivo a partir de otra base: `python -m app.db.datos_json exportar` (escribe `datos/foodstore_datos.json`; acepta otra ruta como argumento).
+
+---
+
 ## Variables de entorno
 
 ### `backend/.env`
@@ -152,9 +178,10 @@ Food-Store-UTN-PIV/
 ├── backend/
 │   ├── app/
 │   │   ├── core/              # configuración, base de datos, seguridad, dependencias, Unit of Work base
-│   │   ├── db/seed.py         # datos iniciales
+│   │   ├── db/                # seed.py (datos iniciales) y datos_json.py (exportar/importar JSON)
 │   │   ├── modules/           # auth, usuarios, categorias, productos, pedidos
 │   │   └── main.py
+│   ├── datos/                 # foodstore_datos.json: datos de demostración
 │   ├── .env.example
 │   ├── requirements.txt
 │   └── test_endpoints.http    # pruebas manuales de todos los endpoints
