@@ -65,7 +65,7 @@ uvicorn app.main:app --reload
 ```
 
 - API: http://localhost:8000/api/v1
-- Documentación interactiva (todos los endpoints): http://localhost:8000/docs
+- Documentación interactiva (todos los endpoints): http://localhost:8000/docs y http://localhost:8000/redoc
 
 El seed es idempotente: se puede ejecutar varias veces sin duplicar datos.
 
@@ -173,6 +173,7 @@ Food-Store-UTN-PIV/
 ## Problemas frecuentes
 
 - **`password authentication failed`**: la contraseña de `DATABASE_URL` no coincide con la del usuario de PostgreSQL.
+- **Linux: `createdb` responde `Peer authentication failed`**: crear la base como el usuario del sistema `postgres` (`sudo -u postgres createdb foodstore_db`). Si ese usuario todavía no tiene contraseña, asignarle la que va en `DATABASE_URL`: `sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'tu_password';"`.
 - **El login funciona pero el frontend dice que no hay sesión / error de CORS**: el frontend tiene que abrirse en `http://localhost:5173` (no `127.0.0.1`) y `FRONTEND_ORIGIN` debe tener ese mismo valor.
 - **Windows: «la ejecución de scripts está deshabilitada» al activar el venv**: ejecutar `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` en PowerShell y volver a activarlo.
 - **Volver a los datos iniciales**: borrar y recrear la base (`dropdb -U postgres foodstore_db` y `createdb -U postgres foodstore_db`) y ejecutar de nuevo `python -m app.db.seed`.
