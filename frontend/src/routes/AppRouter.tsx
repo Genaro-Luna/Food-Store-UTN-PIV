@@ -4,6 +4,8 @@ import { LoginPage } from '@/features/auth/pages/LoginPage';
 import { RegisterPage } from '@/features/auth/pages/RegisterPage';
 import { UnauthorizedPage } from '@/features/auth/pages/UnauthorizedPage';
 import { AdminCategoriasPage } from '@/features/categorias/pages/AdminCategoriasPage';
+import { AdminPedidosPage } from '@/features/pedidos/pages/AdminPedidosPage';
+import { AdminResumenPage } from '@/features/pedidos/pages/AdminResumenPage';
 import { CarritoPage } from '@/features/pedidos/pages/CarritoPage';
 import { CheckoutPage } from '@/features/pedidos/pages/CheckoutPage';
 import { MisPedidosPage } from '@/features/pedidos/pages/MisPedidosPage';
@@ -34,7 +36,9 @@ export const AppRouter: React.FC = () => (
                 {/* Solo admin */}
                 <Route element={<ProtectedRoute roles={['admin']} />}>
                     <Route path="/admin" element={<AdminLayout />}>
-                        <Route index element={<Navigate to="productos" replace />} />
+                        <Route index element={<Navigate to="resumen" replace />} />
+                        <Route path="resumen" element={<AdminResumenPage />} />
+                        <Route path="pedidos" element={<AdminPedidosPage />} />
                         <Route path="productos" element={<AdminProductosPage />} />
                         <Route path="categorias" element={<AdminCategoriasPage />} />
                         <Route path="usuarios" element={<AdminUsuariosPage />} />

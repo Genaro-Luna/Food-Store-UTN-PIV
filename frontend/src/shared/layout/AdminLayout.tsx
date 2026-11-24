@@ -2,6 +2,8 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 
 const SECCIONES = [
+    { to: 'resumen', etiqueta: 'Resumen' },
+    { to: 'pedidos', etiqueta: 'Pedidos' },
     { to: 'productos', etiqueta: 'Productos' },
     { to: 'categorias', etiqueta: 'Categorías' },
     { to: 'usuarios', etiqueta: 'Usuarios' },
