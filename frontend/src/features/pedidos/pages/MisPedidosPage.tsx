@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import { EstadoError } from '@/shared/components/EstadoError';
 import { EstadoVacio } from '@/shared/components/EstadoVacio';
 import { Paginacion } from '@/shared/components/Paginacion';
@@ -13,6 +14,7 @@ const POR_PAGINA = 5;
 export const MisPedidosPage: React.FC = () => {
     const [pagina, setPagina] = useState(0);
     const navigate = useNavigate();
+    const { esAdmin } = useAuth();
     // El backend devuelve solo los pedidos del usuario de la cookie
     const { data, isLoading, isError, error, refetch, isPlaceholderData } = usePedidos({
         skip: pagina * POR_PAGINA,
@@ -22,6 +24,11 @@ export const MisPedidosPage: React.FC = () => {
 
     const pedidos = data?.items ?? [];
     const total = data?.total ?? 0;
+
+    // Para el admin GET /pedidos devuelve los de todos: los gestiona desde el panel.
+    if (esAdmin) {
+        return <Navigate to="/admin/pedidos" replace />;
+    }
 
     return (
         <section>

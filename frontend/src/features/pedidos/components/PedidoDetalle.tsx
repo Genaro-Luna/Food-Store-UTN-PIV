@@ -11,11 +11,13 @@ interface PedidoDetalleProps {
     acciones?: React.ReactNode;
     /** Dato extra de la cabecera, por ejemplo el usuario en el panel admin. */
     subtitulo?: string;
+    /** Muestra el detalle desplegado desde el inicio (modal del panel). */
+    abiertoInicial?: boolean;
 }
 
 /** Cabecera del pedido con su detalle desplegable (líneas, entrega y pago). */
-export const PedidoDetalle: React.FC<PedidoDetalleProps> = ({ pedido, acciones, subtitulo }) => {
-    const [abierto, setAbierto] = useState(false);
+export const PedidoDetalle: React.FC<PedidoDetalleProps> = ({ pedido, acciones, subtitulo, abiertoInicial = false }) => {
+    const [abierto, setAbierto] = useState(abiertoInicial);
     const unidades = pedido.items.reduce((suma, i) => suma + i.cantidad, 0);
 
     return (

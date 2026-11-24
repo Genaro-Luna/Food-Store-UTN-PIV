@@ -7,14 +7,17 @@ interface DataTableProps<T> {
     totalItems: number;
     mensajeVacio?: string;
     accionVacio?: { etiqueta: string; onClick: () => void };
+    /** Paginación del servidor: si se pasa, reemplaza a la del cliente. */
+    paginacionServidor?: { pagina: number; totalPaginas: number; onCambiar: (pagina: number) => void; deshabilitado?: boolean };
 }
 
-/** Tabla de TanStack Table con orden por columna y paginación del lado del cliente. */
+/** Tabla de TanStack Table con orden por columna y paginación del cliente o del servidor. */
 export function DataTable<T>({
     table,
     totalItems,
     mensajeVacio = 'No hay registros.',
     accionVacio,
+    paginacionServidor,
 }: DataTableProps<T>) {
     if (totalItems === 0) {
         return <EstadoVacio titulo={mensajeVacio} accion={accionVacio} />;
@@ -69,12 +72,16 @@ export function DataTable<T>({
             </div>
 
             <div className="border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-gray-700 dark:bg-gray-900/40">
-                <Paginacion
-                    pagina={pageIndex}
-                    totalPaginas={table.getPageCount()}
-                    totalItems={totalItems}
-                    onCambiar={(p) => table.setPageIndex(p)}
-                />
+                {paginacionServidor ? (
+                    <Paginacion {...paginacionServidor} totalItems={totalItems} />
+                ) : (
+                    <Paginacion
+                        pagina={pageIndex}
+                        totalPaginas={table.getPageCount()}
+                        totalItems={totalItems}
+                        onCambiar={(p) => table.setPageIndex(p)}
+                    />
+                )}
             </div>
         </div>
     );

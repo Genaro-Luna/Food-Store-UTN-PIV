@@ -49,3 +49,18 @@ export interface FiltrosPedidos {
     limit?: number;
     estado?: EstadoPedido;
 }
+
+/** Cuerpo de PATCH /pedidos/{id}/estado (CambioEstado). */
+export interface CambioEstado {
+    estado: EstadoPedido;
+}
+
+/** Espeja ResumenPedidos: indicadores del panel de administración. */
+export interface ResumenPedidos {
+    pendientes: number;
+    en_preparacion: number;
+    entregados: number;
+    cancelados: number;
+    pedidos_hoy: number;
+    ingresos_entregados: number;
+}
