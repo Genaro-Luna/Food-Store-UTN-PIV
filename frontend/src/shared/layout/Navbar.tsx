@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/features/auth/hooks/useAuth';
 import { RolBadge } from '@/features/usuarios/components/RolBadge';
+import { useCartStore } from '@/store/cartStore';
 import { useThemeStore } from '@/store/themeStore';
 
 const claseLink = ({ isActive }: { isActive: boolean }) =>
@@ -13,6 +14,7 @@ export const Navbar: React.FC = () => {
     const { usuario, esAdmin, logout } = useAuth();
     const darkMode = useThemeStore((s) => s.darkMode);
     const toggleTheme = useThemeStore((s) => s.toggleTheme);
+    const unidadesEnCarrito = useCartStore((s) => s.cantidadTotal());
     const navigate = useNavigate();
 
     const cerrarSesion = async () => {
@@ -30,6 +32,22 @@ export const Navbar: React.FC = () => {
                     <NavLink to="/" end className={claseLink}>
                         Catálogo
                     </NavLink>
+                    <NavLink to="/carrito" className={claseLink}>
+                        Carrito
+                        {unidadesEnCarrito > 0 && (
+                            <span
+                                aria-label={`${unidadesEnCarrito} unidades`}
+                                className="ml-1.5 rounded-full bg-white px-1.5 py-0.5 text-xs font-bold text-orange-700"
+                            >
+                                {unidadesEnCarrito}
+                            </span>
+                        )}
+                    </NavLink>
+                    {usuario && !esAdmin && (
+                        <NavLink to="/mis-pedidos" className={claseLink}>
+                            Mis pedidos
+                        </NavLink>
+                    )}
                     {esAdmin && (
                         <NavLink to="/admin" className={claseLink}>
                             Panel admin
