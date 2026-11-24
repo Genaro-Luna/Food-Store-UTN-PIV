@@ -22,6 +22,16 @@
       "email": "juan@foodstore.com",
       "role": "user",
       "created_at": "2026-11-22T17:16:41.409637-03:00"
+    },
+    {
+      "full_name": "María Gómez",
+      "username": "maria",
+      "hashed_password": "$2b$12$rKnXZIugDUbqcB2j0LJ9vu2OAtyCpoEQopIRfRBVdFL50IWxXBMga",
+      "disabled": false,
+      "id": 3,
+      "email": "maria@foodstore.com",
+      "role": "user",
+      "created_at": "2026-11-24T10:12:31.482915-03:00"
     }
   ],
   "categorias": [
@@ -59,7 +69,7 @@
       "categoria_id": 1,
       "nombre": "Hamburguesa Clásica",
       "precio_base": 8500.0,
-      "stock": 20,
+      "stock": 18,
       "activo": true
     },
     {
@@ -125,7 +135,7 @@
       "categoria_id": 3,
       "nombre": "Coca-Cola 500 ml",
       "precio_base": 2200.0,
-      "stock": 40,
+      "stock": 38,
       "activo": true
     },
     {
@@ -140,17 +150,6 @@
       "activo": true
     },
     {
-      "id": 9,
-      "descripcion": "prueba 1",
-      "imagen_url": null,
-      "disponible": true,
-      "categoria_id": 2,
-      "nombre": "Probando producto nuevo",
-      "precio_base": 100000.0,
-      "stock": 12141251,
-      "activo": false
-    },
-    {
       "id": 10,
       "descripcion": "Porción mediana de Papas fritas crocantes con beicon, cheddar y cebolla de verdeo",
       "imagen_url": "https://imgs.search.brave.com/gtJyh0jXmZa880QwmQMMXWDhMTt494Mm5SQNCQKRpGk/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9sb2Nv/c3hsYXBhcnJpbGxh/LmNvbS93cC1jb250/ZW50L3VwbG9hZHMv/MjAxNS8wMi9SZWNl/dGEtcmVjZXRhcy1s/b2Nvcy14LWxhLXBh/cnJpbGxhLWxvY29z/eGxhcGFycmlsbGEt/cmVjZXRhLXBhcGFz/LWZyaXRhcy1jaGVk/ZGFyLXZlcmRlby1w/YW5jZXRhLXBhcGFz/LWZyaXRhcy1jaGVk/ZGFyLXZlcmRlLTY0/MHg0NzcuanBn",
@@ -158,7 +157,7 @@
       "categoria_id": 2,
       "nombre": "Papas Fritas Prime",
       "precio_base": 8500.0,
-      "stock": 15,
+      "stock": 14,
       "activo": true
     },
     {
@@ -169,7 +168,7 @@
       "categoria_id": 3,
       "nombre": "Agua Mineral 500ml",
       "precio_base": 1500.0,
-      "stock": 20,
+      "stock": 18,
       "activo": true
     },
     {
@@ -180,7 +179,7 @@
       "categoria_id": 4,
       "nombre": "Pizza Común",
       "precio_base": 10000.0,
-      "stock": 12,
+      "stock": 11,
       "activo": true
     },
     {
@@ -191,7 +190,7 @@
       "categoria_id": 4,
       "nombre": "Pizza Fugazzeta",
       "precio_base": 13500.0,
-      "stock": 8,
+      "stock": 7,
       "activo": true
     }
   ],
@@ -310,151 +309,13 @@
       ]
     },
     {
-      "id": 8,
-      "usuario_id": 2,
-      "forma_pago": "TRANSFERENCIA",
-      "notas": "lsdkfghbwseyukr",
-      "created_at": "2026-11-23T22:48:56.333339-03:00",
-      "estado": "CANCELADO",
-      "direccion_entrega": "Ovidio Lago",
-      "total": 39400.0,
-      "updated_at": "2026-11-23T22:49:11.053309-03:00",
-      "items": [
-        {
-          "id": 8,
-          "cantidad": 2,
-          "precio_unitario": 8500.0,
-          "producto_id": 1,
-          "nombre_producto": "Hamburguesa Clásica",
-          "subtotal": 17000.0
-        },
-        {
-          "id": 9,
-          "cantidad": 2,
-          "precio_unitario": 11200.0,
-          "producto_id": 2,
-          "nombre_producto": "Hamburguesa Doble Cheddar",
-          "subtotal": 22400.0
-        }
-      ]
-    },
-    {
-      "id": 9,
-      "usuario_id": 1,
-      "forma_pago": "EFECTIVO",
-      "notas": null,
-      "created_at": "2026-11-24T09:34:26.735281-03:00",
-      "estado": "CANCELADO",
-      "direccion_entrega": "Av. Almafuerte",
-      "total": 196700.0,
-      "updated_at": "2026-11-24T09:34:40.287877-03:00",
-      "items": [
-        {
-          "id": 10,
-          "cantidad": 2,
-          "precio_unitario": 4200.0,
-          "producto_id": 5,
-          "nombre_producto": "Aros de Cebolla",
-          "subtotal": 8400.0
-        },
-        {
-          "id": 11,
-          "cantidad": 3,
-          "precio_unitario": 3500.0,
-          "producto_id": 4,
-          "nombre_producto": "Papas Fritas",
-          "subtotal": 10500.0
-        },
-        {
-          "id": 12,
-          "cantidad": 3,
-          "precio_unitario": 5200.0,
-          "producto_id": 6,
-          "nombre_producto": "Nuggets de Pollo",
-          "subtotal": 15600.0
-        },
-        {
-          "id": 13,
-          "cantidad": 2,
-          "precio_unitario": 9800.0,
-          "producto_id": 3,
-          "nombre_producto": "Hamburguesa Veggie",
-          "subtotal": 19600.0
-        },
-        {
-          "id": 14,
-          "cantidad": 2,
-          "precio_unitario": 11200.0,
-          "producto_id": 2,
-          "nombre_producto": "Hamburguesa Doble Cheddar",
-          "subtotal": 22400.0
-        },
-        {
-          "id": 15,
-          "cantidad": 1,
-          "precio_unitario": 8500.0,
-          "producto_id": 1,
-          "nombre_producto": "Hamburguesa Clásica",
-          "subtotal": 8500.0
-        },
-        {
-          "id": 16,
-          "cantidad": 11,
-          "precio_unitario": 2200.0,
-          "producto_id": 7,
-          "nombre_producto": "Coca-Cola 500 ml",
-          "subtotal": 24200.0
-        },
-        {
-          "id": 17,
-          "cantidad": 9,
-          "precio_unitario": 1500.0,
-          "producto_id": 11,
-          "nombre_producto": "Agua Mineral 500ml",
-          "subtotal": 13500.0
-        },
-        {
-          "id": 18,
-          "cantidad": 2,
-          "precio_unitario": 10000.0,
-          "producto_id": 12,
-          "nombre_producto": "Pizza Común",
-          "subtotal": 20000.0
-        },
-        {
-          "id": 19,
-          "cantidad": 4,
-          "precio_unitario": 2500.0,
-          "producto_id": 8,
-          "nombre_producto": "Limonada Casera 1,5L",
-          "subtotal": 10000.0
-        },
-        {
-          "id": 20,
-          "cantidad": 2,
-          "precio_unitario": 8500.0,
-          "producto_id": 10,
-          "nombre_producto": "Papas Fritas Prime",
-          "subtotal": 17000.0
-        },
-        {
-          "id": 21,
-          "cantidad": 2,
-          "precio_unitario": 13500.0,
-          "producto_id": 13,
-          "nombre_producto": "Pizza Fugazzeta",
-          "subtotal": 27000.0
-        }
-      ]
-    },
-    {
       "id": 10,
       "usuario_id": 2,
       "forma_pago": "EFECTIVO",
       "notas": null,
       "created_at": "2026-11-24T09:35:21.759582-03:00",
       "estado": "CANCELADO",
-      "direccion_entrega": "Ovidio Lago",
+      "direccion_entrega": "Av. San Martín 1234, Mendoza",
       "total": 23900.0,
       "updated_at": "2026-11-24T09:35:54.977444-03:00",
       "items": [
@@ -481,6 +342,93 @@
           "producto_id": 5,
           "nombre_producto": "Aros de Cebolla",
           "subtotal": 4200.0
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "usuario_id": 3,
+      "forma_pago": "EFECTIVO",
+      "notas": "Tocar timbre 2B",
+      "created_at": "2026-11-24T10:20:14.305118-03:00",
+      "estado": "PENDIENTE",
+      "direccion_entrega": "Las Heras 320, Ciudad de Mendoza",
+      "total": 17900.0,
+      "updated_at": "2026-11-24T10:20:14.305118-03:00",
+      "items": [
+        {
+          "id": 25,
+          "cantidad": 1,
+          "precio_unitario": 13500.0,
+          "producto_id": 13,
+          "nombre_producto": "Pizza Fugazzeta",
+          "subtotal": 13500.0
+        },
+        {
+          "id": 26,
+          "cantidad": 2,
+          "precio_unitario": 2200.0,
+          "producto_id": 7,
+          "nombre_producto": "Coca-Cola 500 ml",
+          "subtotal": 4400.0
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "usuario_id": 3,
+      "forma_pago": "TRANSFERENCIA",
+      "notas": null,
+      "created_at": "2026-11-24T10:31:47.918264-03:00",
+      "estado": "EN_PREPARACION",
+      "direccion_entrega": "Las Heras 320, Ciudad de Mendoza",
+      "total": 25500.0,
+      "updated_at": "2026-11-24T10:40:02.117530-03:00",
+      "items": [
+        {
+          "id": 27,
+          "cantidad": 2,
+          "precio_unitario": 8500.0,
+          "producto_id": 1,
+          "nombre_producto": "Hamburguesa Clásica",
+          "subtotal": 17000.0
+        },
+        {
+          "id": 28,
+          "cantidad": 1,
+          "precio_unitario": 8500.0,
+          "producto_id": 10,
+          "nombre_producto": "Papas Fritas Prime",
+          "subtotal": 8500.0
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "usuario_id": 2,
+      "forma_pago": "EFECTIVO",
+      "notas": null,
+      "created_at": "2026-11-24T10:52:09.664031-03:00",
+      "estado": "PENDIENTE",
+      "direccion_entrega": "Belgrano 450, Godoy Cruz",
+      "total": 13000.0,
+      "updated_at": "2026-11-24T10:52:09.664031-03:00",
+      "items": [
+        {
+          "id": 29,
+          "cantidad": 1,
+          "precio_unitario": 10000.0,
+          "producto_id": 12,
+          "nombre_producto": "Pizza Común",
+          "subtotal": 10000.0
+        },
+        {
+          "id": 30,
+          "cantidad": 2,
+          "precio_unitario": 1500.0,
+          "producto_id": 11,
+          "nombre_producto": "Agua Mineral 500ml",
+          "subtotal": 3000.0
         }
       ]
     }
