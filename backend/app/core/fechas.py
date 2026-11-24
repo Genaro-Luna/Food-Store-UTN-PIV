@@ -6,8 +6,6 @@ def ahora_utc() -> datetime:
     return datetime.now(timezone.utc)
 
 
-# Argentina no usa horario de verano: UTC-3 fijo. Se evita zoneinfo porque en
-# Windows necesita instalar el paquete tzdata.
 ZONA_ARGENTINA = timezone(timedelta(hours=-3), "ART")
 
 

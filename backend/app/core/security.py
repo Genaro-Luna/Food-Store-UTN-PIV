@@ -5,8 +5,7 @@ from passlib.context import CryptContext
 
 from app.core.config import settings
 
-# Passlib con bcrypt (costo 12 por defecto). bcrypt queda fijado en 4.0.1
-# porque Passlib 1.7.4 falla con bcrypt 5.
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
